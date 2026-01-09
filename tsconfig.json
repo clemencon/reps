@@ -1,0 +1,34 @@
+{
+	// Visit https://aka.ms/tsconfig to read more about this file.
+	"include": ["src"],
+	"compilerOptions": {
+		"rootDir": "./src",
+		"outDir": "./dist",
+
+		"target": "esnext",
+		"lib": ["esnext"],
+		"types": ["node"],
+
+		"module": "nodenext",
+		"moduleDetection": "force",
+		"verbatimModuleSyntax": true,
+		"isolatedModules": true,
+		"skipLibCheck": true,
+
+		"sourceMap": true,
+		"declaration": true,
+		"declarationMap": true,
+
+		"strict": true,
+		"noUncheckedIndexedAccess": true,
+		"exactOptionalPropertyTypes": true,
+		"noUncheckedSideEffectImports": true,
+		"noPropertyAccessFromIndexSignature": true,
+		"noUnusedLocals": true,
+		"noUnusedParameters": true,
+		"noImplicitReturns": true,
+		"noImplicitOverride": true,
+		"noFallthroughCasesInSwitch": true,
+		"forceConsistentCasingInFileNames": true
+	}
+}
