@@ -9,20 +9,12 @@ describe("Card", () => {
 	});
 
 	test("cannot have a blank question", () => {
-		expect(() => new Card("", "Some answer.")).toThrowError(
-			"Question cannot be blank.",
-		);
-		expect(() => new Card("   ", "Some answer.")).toThrowError(
-			"Question cannot be blank.",
-		);
+		expect(() => new Card("", "Some answer.")).toThrowError("Question cannot be blank.");
+		expect(() => new Card("   ", "Some answer.")).toThrowError("Question cannot be blank.");
 	});
 
 	test("cannot have a blank answer", () => {
-		expect(() => new Card("What is the answer?", "")).toThrowError(
-			"Answer cannot be blank.",
-		);
-		expect(() => new Card("What is the answer?", "   ")).toThrowError(
-			"Answer cannot be blank.",
-		);
+		expect(() => new Card("What is the answer?", "")).toThrowError("Answer cannot be blank.");
+		expect(() => new Card("What is the answer?", "   ")).toThrowError("Answer cannot be blank.");
 	});
 });

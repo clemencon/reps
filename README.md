@@ -145,12 +145,68 @@ pnpm fix
 
 # Run the tests (including the snapshot tests).
 pnpm test
+```
 
-# Review the diff first to verify changes are correct.
+## SM-2 Algorithm
 
-# Update snapshot after reviewing changes.
+[Original article on Wikipedia](https://en.wikipedia.org/wiki/SuperMemo)
+
+The first computer-based SuperMemo algorithm (SM-2) tracks three properties for each card being studied:
+
+- The repetition number n, which is the number of times the card has been successfully recalled
+  (meaning it was given a grade ≥ 3) in a row since the last time it was not.
+- The easiness factor EF, which loosely indicates how "easy" the card is
+  (more precisely, it determines how quickly the inter-repetition interval grows). The initial value of EF is 2.5.
+- The inter-repetition interval I, which is the length of time (in days)
+  SuperMemo will wait after the previous review before asking the user to review the card again.
+
+Every time the user starts a review session,
+SuperMemo provides the user with the cards whose last review occurred at least I days ago.
+For each review, the user tries to recall the information and (after being shown the correct answer)
+specifies a grade q (from 0 to 5) indicating a self-evaluation of the quality of their response,
+with each grade having the following meaning:
+
+- 0: Total blackout, complete failure to recall the information.
+- 1: Incorrect response, but upon seeing the correct answer, it felt familiar.
+- 2: Incorrect response, but upon seeing the correct answer, it seemed easy to remember.
+- 3: Correct response, but required significant effort to recall.
+- 4: Correct response, after some hesitation.
+- 5: Correct response with perfect recall.
+
+The following algorithm is then applied to update the three variables associated with the card:
 
 ```
+algorithm SM-2 is
+    input:  user grade q
+            repetition number n
+            easiness factor EF
+            interval I
+    output: updated values of n, EF, and I
+
+    if q ≥ 3 (correct response) then
+        if n = 0 then
+            I ← 1
+        else if n = 1 then
+            I ← 6
+        else
+            I ← round(I × EF)
+        end if
+        increment n
+    else (incorrect response)
+        n ← 0
+        I ← 1
+    end if
+    
+    EF ← EF + (0.1 − (5 − q) × (0.08 + (5 − q) × 0.02))
+    if EF < 1.3 then
+        EF ← 1.3
+    end if
+    
+    return (n, EF, I)
+```
+
+After all scheduled reviews are complete, SuperMemo asks the user to re-review any cards they marked
+with a grade less than 4 repeatedly until they give a grade ≥ 4.
 
 ## Stack
 
