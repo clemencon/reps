@@ -6,11 +6,7 @@ export class Grade {
 	private static readonly CORRECT_THRESHOLD = 3;
 
 	public constructor(value: number) {
-		if (!Grade.isValid(value)) {
-			throw new Error(
-				`Invalid grade: ${value}. Must be an integer between ${Grade.MINIMUM_VALUE} and ${Grade.MAXIMUM_VALUE}.`,
-			);
-		}
+		Grade.validateValue(value);
 		this.value = value;
 	}
 
@@ -18,7 +14,11 @@ export class Grade {
 		return this.value >= Grade.CORRECT_THRESHOLD;
 	}
 
-	private static isValid(value: number) {
-		return Number.isInteger(value) && value >= Grade.MINIMUM_VALUE && value <= Grade.MAXIMUM_VALUE;
+	private static validateValue(value: number): void {
+		if (!Number.isInteger(value) || value < Grade.MINIMUM_VALUE || value > Grade.MAXIMUM_VALUE) {
+			throw new Error(
+				`Invalid grade: ${value}. Must be an integer between ${Grade.MINIMUM_VALUE} and ${Grade.MAXIMUM_VALUE}.`,
+			);
+		}
 	}
 }
