@@ -10,10 +10,10 @@ describe("DateReviewed", () => {
 
 	test("today's date can be parsed from an ISO string", () => {
 		const today = new Date();
-		const todayString = today.toISOString().split("T")[0] ?? "";
+		const todayString = today.toISOString();
 		const dateReviewed = DateReviewed.fromIsoDateString(todayString);
 		expect(dateReviewed).toBeDefined();
-		expect(dateReviewed.toIsoDateString()).toBe(todayString);
+		expect(dateReviewed.toIsoString()).toBe(todayString);
 	});
 
 	test("past dates can be parsed from an ISO string", () => {
@@ -63,17 +63,16 @@ describe("DateReviewed", () => {
 		expect(dateReviewed.hasElapsed(new ReviewInterval(5))).toBe(false);
 	});
 
-	test("elapsed calculation uses calendar days, not hours", () => {
-		const yesterday = new Date();
-		yesterday.setDate(yesterday.getDate() - 1);
-		yesterday.setHours(23, 59, 59, 999);
-		const dateReviewed = new DateReviewed(yesterday);
-		expect(dateReviewed.hasElapsed(new ReviewInterval(1))).toBe(true);
+	test("elapsed calculation uses actual time passed", () => {
+		const almostOneDayAgo = new Date();
+		almostOneDayAgo.setHours(almostOneDayAgo.getHours() - 23);
+		const dateReviewed = new DateReviewed(almostOneDayAgo);
+		expect(dateReviewed.hasElapsed(new ReviewInterval(1))).toBe(false);
 	});
 
-	test("toIsoDateString() formats as YYYY-MM-DD", () => {
-		const date = new Date(2024, 2, 15); // March 15, 2024
+	test("toIsoString() returns full ISO date string", () => {
+		const date = new Date("2024-03-15T10:30:00.000Z");
 		const dateReviewed = new DateReviewed(date);
-		expect(dateReviewed.toIsoDateString()).toBe("2024-03-15");
+		expect(dateReviewed.toIsoString()).toBe("2024-03-15T10:30:00.000Z");
 	});
 });

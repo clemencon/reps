@@ -1,13 +1,11 @@
 import type { ReviewInterval } from "./ReviewInterval.js";
 
 export class DateReviewed {
-	private static readonly MS_PER_DAY = 1000 * 60 * 60 * 24;
-	private readonly date: Date;
+	private readonly reviewedOn: Date;
 
 	constructor(date: Date) {
-		const normalizedDate = DateReviewed.normalizeToMidnight(new Date(date));
-		DateReviewed.validateDate(normalizedDate);
-		this.date = normalizedDate;
+		DateReviewed.validateDate(date);
+		this.reviewedOn = date;
 	}
 
 	public static today(): DateReviewed {
@@ -19,27 +17,17 @@ export class DateReviewed {
 	}
 
 	public hasElapsed(interval: ReviewInterval): boolean {
-		const diffTime = DateReviewed.today().date.getTime() - this.date.getTime();
-		const diffDays = Math.floor(diffTime / DateReviewed.MS_PER_DAY);
-		return diffDays >= interval.days;
+		const nextReviewTime = new Date(this.reviewedOn);
+		nextReviewTime.setDate(nextReviewTime.getDate() + interval.days);
+		return new Date() >= nextReviewTime;
 	}
 
-	public toIsoDateString(): string {
-		const year = this.date.getFullYear();
-		const month = String(this.date.getMonth() + 1).padStart(2, "0");
-		const day = String(this.date.getDate()).padStart(2, "0");
-		return `${year}-${month}-${day}`;
-	}
-
-	private static normalizeToMidnight(date: Date): Date {
-		const normalizedDate = new Date(date);
-		normalizedDate.setHours(0, 0, 0, 0);
-		return normalizedDate;
+	public toIsoString(): string {
+		return this.reviewedOn.toISOString();
 	}
 
 	private static validateDate(date: Date): void {
-		const today = DateReviewed.normalizeToMidnight(new Date());
-		if (date > today) {
+		if (date > new Date()) {
 			throw new Error("Invalid review date: cannot be in the future.");
 		}
 	}
