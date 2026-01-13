@@ -2,8 +2,8 @@ import { describe, expect, test } from "vitest";
 import { ConsecutiveSuccesses } from "../src/ConsecutiveSuccesses.js";
 import { Grade } from "../src/Grade.js";
 import { MemoryStrength } from "../src/MemoryStrength.js";
-import { Progress } from "../src/Progress.js";
 import { ReviewInterval } from "../src/ReviewInterval.js";
+import { Schedule } from "../src/Schedule.js";
 
 const reviewGradeArguments = [0, 1, 2, 3, 4, 5];
 const consecutiveSuccessesArguments = [0, 1, 2, 3];
@@ -36,16 +36,16 @@ describe("sm2", () => {
 			memoryStrength,
 			reviewInterval,
 		] of generateArguments()) {
-			const progress = new Progress(
+			const schedule = new Schedule(
 				new ConsecutiveSuccesses(consecutiveSuccesses),
 				new MemoryStrength(memoryStrength),
 				new ReviewInterval(reviewInterval),
 			);
-			const recalculatedProgress = progress.recalculateAfterReview(new Grade(reviewGrade));
+			const recalculatedSchedule = schedule.recalculateAfterReview(new Grade(reviewGrade));
 			const result = {
-				n: recalculatedProgress.consecutiveSuccesses.count,
-				EF: recalculatedProgress.memoryStrength.value,
-				I: recalculatedProgress.reviewInterval.days,
+				n: recalculatedSchedule.consecutiveSuccesses.count,
+				EF: recalculatedSchedule.memoryStrength.value,
+				I: recalculatedSchedule.reviewInterval.days,
 			};
 
 			output += `q: ${reviewGrade} n: ${consecutiveSuccesses} ef: ${memoryStrength} i: ${reviewInterval}`;

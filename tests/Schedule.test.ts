@@ -2,13 +2,13 @@ import { describe, expect, test } from "vitest";
 import { ConsecutiveSuccesses } from "../src/ConsecutiveSuccesses.js";
 import { Grade } from "../src/Grade.js";
 import { MemoryStrength } from "../src/MemoryStrength.js";
-import { Progress } from "../src/Progress.js";
 import { ReviewInterval } from "../src/ReviewInterval.js";
+import { Schedule } from "../src/Schedule.js";
 
-describe("Progress", () => {
+describe("Schedule", () => {
 	describe("SM-2 spaced repetition algorithm", () => {
-		test("failing a card resets progress to start over tomorrow", () => {
-			const wellLearnedCard = new Progress(
+		test("failing a card resets schedule to start over tomorrow", () => {
+			const wellLearnedCard = new Schedule(
 				new ConsecutiveSuccesses(5),
 				new MemoryStrength(2.5),
 				new ReviewInterval(30),
@@ -21,7 +21,7 @@ describe("Progress", () => {
 		});
 
 		test("first correct response schedules review for tomorrow", () => {
-			const newCard = new Progress();
+			const newCard = new Schedule();
 
 			const afterFirstSuccess = newCard.recalculateAfterReview(new Grade(4));
 
@@ -30,7 +30,7 @@ describe("Progress", () => {
 		});
 
 		test("second correct response schedules review in 6 days", () => {
-			const cardSeenOnce = new Progress(
+			const cardSeenOnce = new Schedule(
 				new ConsecutiveSuccesses(1),
 				new MemoryStrength(2.5),
 				new ReviewInterval(1),
@@ -43,7 +43,7 @@ describe("Progress", () => {
 		});
 
 		test("third correct response and beyond extends interval by memory strength factor", () => {
-			const cardSeenTwice = new Progress(
+			const cardSeenTwice = new Schedule(
 				new ConsecutiveSuccesses(2),
 				new MemoryStrength(2.5),
 				new ReviewInterval(6),
@@ -56,18 +56,18 @@ describe("Progress", () => {
 		});
 
 		test("stronger memory extends intervals more aggressively", () => {
-			const baseProgress = new Progress(
+			const baseSchedule = new Schedule(
 				new ConsecutiveSuccesses(2),
 				new MemoryStrength(2.5),
 				new ReviewInterval(10),
 			);
-			const strongerMemory = new Progress(
+			const strongerMemory = new Schedule(
 				new ConsecutiveSuccesses(2),
 				new MemoryStrength(4.0),
 				new ReviewInterval(10),
 			);
 
-			const normalGrowth = baseProgress.recalculateAfterReview(new Grade(4));
+			const normalGrowth = baseSchedule.recalculateAfterReview(new Grade(4));
 			const acceleratedGrowth = strongerMemory.recalculateAfterReview(new Grade(4));
 
 			expect(normalGrowth.reviewInterval.days).toBe(25);

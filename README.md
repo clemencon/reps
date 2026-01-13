@@ -50,7 +50,7 @@ Paris.
 - Format: question, then `???`, then answer
 - Content can be text, code, formulas, anything
 - File names are descriptive but don't affect functionality
-- Progress tracks performance and schedules the next review
+- Schedule tracks performance and schedules the next review
 
 ### Topic
 
@@ -98,7 +98,7 @@ You. The student:
 - Selects topics to study
 - Reviews cards and self-evaluates answers
 - Assigns review grades based on recall
-- Progresses through review sessions
+- Advances through review sessions
 
 ### Topic Tree
 
@@ -109,7 +109,7 @@ You. The student:
   - Multiple subtopics
   - One deck with all cards for that topic
 
-### Progress
+### Schedule
 
 Reps' memory system.
 It tracks your performance with each card, records retention grades,
@@ -126,7 +126,7 @@ Review intervals increase exponentially for well-remembered cards.
 ## Architecture
 
 - Cards and Topics: Plain text files in the filesystem (not in database)
-- Progress: SQLite database tracking performance and review schedules
+- Schedule: SQLite database tracking performance and review schedules
 - Card Identification: SHA-1 hash of text file content
 
 This hybrid approach keeps study material editable as plain text while maintaining performance data in a structured database.
