@@ -8,15 +8,15 @@ describe("Grade", () => {
 	});
 
 	test("grades 3 and above are correct responses", () => {
-		expect(new Grade(3).isCorrectResponse).toBe(true);
-		expect(new Grade(4).isCorrectResponse).toBe(true);
-		expect(new Grade(5).isCorrectResponse).toBe(true);
+		expect(new Grade(3).isCorrect).toBe(true);
+		expect(new Grade(4).isCorrect).toBe(true);
+		expect(new Grade(5).isCorrect).toBe(true);
 	});
 
 	test("grades below 3 are incorrect responses", () => {
-		expect(new Grade(0).isCorrectResponse).toBe(false);
-		expect(new Grade(1).isCorrectResponse).toBe(false);
-		expect(new Grade(2).isCorrectResponse).toBe(false);
+		expect(new Grade(0).isCorrect).toBe(false);
+		expect(new Grade(1).isCorrect).toBe(false);
+		expect(new Grade(2).isCorrect).toBe(false);
 	});
 
 	test("rejects values below 0", () => {

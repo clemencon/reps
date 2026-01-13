@@ -11,22 +11,27 @@ export class Progress {
 	) {}
 
 	public recalculateAfterReview(grade: Grade): Progress {
-		let newConsecutiveSuccesses = new ConsecutiveSuccesses();
-		const newMemoryStrength = this.memoryStrength.recalculateAfterReview(grade);
-		let newReviewInterval = new ReviewInterval(1);
+		if (grade.isCorrect) return this.recalculateAfterSuccess(grade);
+		return this.recalculateAfterFailure(grade);
+	}
 
-		if (grade.isCorrectResponse) {
-			newConsecutiveSuccesses = this.consecutiveSuccesses.increment();
-			if (this.consecutiveSuccesses.count === 1) {
-				newReviewInterval = new ReviewInterval(6);
-			}
-			if (this.consecutiveSuccesses.count > 1) {
-				newReviewInterval = new ReviewInterval(
-					Math.round(this.reviewInterval.days * this.memoryStrength.value),
-				);
-			}
-		}
+	private recalculateAfterSuccess(grade: Grade): Progress {
+		const consecutiveSuccesses = this.consecutiveSuccesses.increment();
+		const memoryStrength = this.memoryStrength.recalculateAfterReview(grade);
+		const reviewInterval = this.recalculateReviewInterval();
+		return new Progress(consecutiveSuccesses, memoryStrength, reviewInterval);
+	}
 
-		return new Progress(newConsecutiveSuccesses, newMemoryStrength, newReviewInterval);
+	private recalculateAfterFailure(grade: Grade): Progress {
+		const consecutiveSuccesses = new ConsecutiveSuccesses();
+		const memoryStrength = this.memoryStrength.recalculateAfterReview(grade);
+		const reviewInterval = new ReviewInterval(1);
+		return new Progress(consecutiveSuccesses, memoryStrength, reviewInterval);
+	}
+
+	private recalculateReviewInterval(): ReviewInterval {
+		if (this.consecutiveSuccesses.count === 0) return new ReviewInterval(1);
+		if (this.consecutiveSuccesses.count === 1) return new ReviewInterval(6);
+		return new ReviewInterval(Math.round(this.reviewInterval.days * this.memoryStrength.value));
 	}
 }

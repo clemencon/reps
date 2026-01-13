@@ -10,7 +10,7 @@ export class Grade {
 		this.value = value;
 	}
 
-	get isCorrectResponse(): boolean {
+	get isCorrect(): boolean {
 		return this.value >= Grade.CORRECT_THRESHOLD;
 	}
 
