@@ -1,7 +1,7 @@
 export class Card {
-	constructor(
-		readonly question: string,
-		readonly answer: string,
+	public constructor(
+		public readonly question: string,
+		public readonly answer: string,
 	) {
 		Card.validateQuestion(question);
 		Card.validateAnswer(answer);

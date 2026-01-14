@@ -5,5 +5,17 @@
 	},
 	"formatter": {
 		"lineWidth": 100
+	},
+	"linter": {
+		"rules": {
+			"style": {
+				"useConsistentMemberAccessibility": {
+					"level": "error",
+					"options": {
+						"accessibility": "explicit"
+					}
+				}
+			}
+		}
 	}
 }
