@@ -3,7 +3,18 @@
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 
 A CLI flashcard app using the SuperMemo SM-2 spaced repetition algorithm.
-Simplicity first.
+
+## Idiosyncrasies
+
+This is a Petri dish, not production code.
+
+- **100% code coverage:** Does it hurt or help?
+- **OOP over type gymnastics:** Classes instead of TypeScript's type system. Easier? Harder? More verbose?
+- **Immutability-first:** Kotlin encourages this. How does it shape TypeScript?
+- **Deep classes, narrow interfaces:** Ousterhout's philosophy.
+  Do narrow interfaces make tests focus on behavior instead of implementation?
+
+The code may look odd.
 
 ## Study Flow
 
