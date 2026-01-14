@@ -1,6 +1,5 @@
 import { describe, expect, test } from "vitest";
 import { DateReviewed } from "../src/DateReviewed.js";
-import { ReviewInterval } from "../src/ReviewInterval.js";
 
 describe("DateReviewed", () => {
 	test("today() captures current date", () => {
@@ -30,44 +29,31 @@ describe("DateReviewed", () => {
 		);
 	});
 
-	test("zero-day interval is immediately elapsed", () => {
+	test("daysSinceReview returns 0 for today's review", () => {
 		const today = new Date();
 		const dateReviewed = new DateReviewed(today);
-		expect(dateReviewed.hasElapsed(new ReviewInterval(0))).toBe(true);
+		expect(dateReviewed.daysSinceReview).toBe(0);
 	});
 
-	test("one-day interval requires a full day", () => {
-		const today = new Date();
-		const dateReviewed = new DateReviewed(today);
-		expect(dateReviewed.hasElapsed(new ReviewInterval(1))).toBe(false);
-	});
-
-	test("interval has elapsed when exact days have passed", () => {
+	test("daysSinceReview returns exact days for past reviews", () => {
 		const fiveDaysAgo = new Date();
 		fiveDaysAgo.setDate(fiveDaysAgo.getDate() - 5);
 		const dateReviewed = new DateReviewed(fiveDaysAgo);
-		expect(dateReviewed.hasElapsed(new ReviewInterval(5))).toBe(true);
+		expect(dateReviewed.daysSinceReview).toBe(5);
 	});
 
-	test("interval has elapsed when days are exceeded", () => {
+	test("daysSinceReview returns correct count for longer periods", () => {
 		const tenDaysAgo = new Date();
 		tenDaysAgo.setDate(tenDaysAgo.getDate() - 10);
 		const dateReviewed = new DateReviewed(tenDaysAgo);
-		expect(dateReviewed.hasElapsed(new ReviewInterval(5))).toBe(true);
+		expect(dateReviewed.daysSinceReview).toBe(10);
 	});
 
-	test("interval is not elapsed until full days pass", () => {
-		const twoDaysAgo = new Date();
-		twoDaysAgo.setDate(twoDaysAgo.getDate() - 2);
-		const dateReviewed = new DateReviewed(twoDaysAgo);
-		expect(dateReviewed.hasElapsed(new ReviewInterval(5))).toBe(false);
-	});
-
-	test("elapsed calculation uses actual time passed", () => {
+	test("daysSinceReview floors partial days", () => {
 		const almostOneDayAgo = new Date();
 		almostOneDayAgo.setHours(almostOneDayAgo.getHours() - 23);
 		const dateReviewed = new DateReviewed(almostOneDayAgo);
-		expect(dateReviewed.hasElapsed(new ReviewInterval(1))).toBe(false);
+		expect(dateReviewed.daysSinceReview).toBe(0);
 	});
 
 	test("toIsoString() returns full ISO date string", () => {

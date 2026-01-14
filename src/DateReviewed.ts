@@ -1,9 +1,8 @@
-import type { ReviewInterval } from "./ReviewInterval.js";
-
 export class DateReviewed {
+	private static readonly MS_PER_DAY = 24 * 60 * 60 * 1000;
 	private readonly reviewedOn: Date;
 
-	constructor(date: Date) {
+	public constructor(date: Date) {
 		DateReviewed.validateDate(date);
 		this.reviewedOn = date;
 	}
@@ -16,10 +15,10 @@ export class DateReviewed {
 		return new DateReviewed(new Date(isoDateString));
 	}
 
-	public hasElapsed(interval: ReviewInterval): boolean {
-		const nextReviewTime = new Date(this.reviewedOn);
-		nextReviewTime.setDate(nextReviewTime.getDate() + interval.days);
-		return new Date() >= nextReviewTime;
+	public get daysSinceReview(): number {
+		const now = new Date();
+		const elapsedTimeMs = now.getTime() - this.reviewedOn.getTime();
+		return Math.floor(elapsedTimeMs / DateReviewed.MS_PER_DAY);
 	}
 
 	public toIsoString(): string {
