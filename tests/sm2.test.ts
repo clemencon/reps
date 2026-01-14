@@ -10,6 +10,14 @@ const consecutiveSuccessesArguments = [0, 1, 2, 3];
 const memoryStrengthArguments = [1.3, 2.0, 2.5, 3.0, 4.0, 5.0];
 const reviewIntervalArguments = [0, 1, 5, 10, 25, 50, 99];
 
+/**
+ * Snapshot test for the SM-2 spaced repetition algorithm.
+ *
+ * Yield all argument combinations.
+ * These guardrails can be removed later.
+ * See: https://en.wikipedia.org/wiki/SuperMemo#Description_of_SM-2_algorithm
+ */
+
 function* generateArguments(): Generator<[number, number, number, number]> {
 	for (const reviewGrade of reviewGradeArguments) {
 		for (const consecutiveSuccesses of consecutiveSuccessesArguments) {
@@ -22,11 +30,6 @@ function* generateArguments(): Generator<[number, number, number, number]> {
 	}
 }
 
-/**
- * Snapshot test for the SM-2 spaced repetition algorithm.
- *
- * See: https://en.wikipedia.org/wiki/SuperMemo#Description_of_SM-2_algorithm
- */
 describe("sm2", () => {
 	test("approval test", () => {
 		let output = "";
@@ -36,10 +39,17 @@ describe("sm2", () => {
 			memoryStrength,
 			reviewInterval,
 		] of generateArguments()) {
-			const schedule = new Schedule(
+			const ScheduleConstructor = Schedule as unknown as new (
+				consecutiveSuccesses: ConsecutiveSuccesses,
+				memoryStrength: MemoryStrength,
+				reviewInterval: ReviewInterval,
+				dateReviewed: null,
+			) => Schedule;
+			const schedule = new ScheduleConstructor(
 				new ConsecutiveSuccesses(consecutiveSuccesses),
 				new MemoryStrength(memoryStrength),
 				new ReviewInterval(reviewInterval),
+				null,
 			);
 			const recalculatedSchedule = schedule.recalculateAfterReview(new Grade(reviewGrade));
 			const result = {

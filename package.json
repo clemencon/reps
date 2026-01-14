@@ -10,8 +10,8 @@
 		"node": "24.12.0"
 	},
 	"scripts": {
-		"check": "biome check && tsc --noEmit && vitest run --coverage",
-		"build": "biome check && vitest run && vitest run --coverage && rm -rf dist && tsc",
+		"check": "biome check && tsc --project tsconfig.test.json && vitest run --coverage",
+		"build": "biome check && tsc --project tsconfig.test.json && vitest run && vitest run --coverage && rm -rf dist && tsc",
 		"fix": "biome check --write .",
 		"test": "vitest",
 		"coverage": "vitest run --coverage"
