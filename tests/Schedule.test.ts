@@ -1,77 +1,58 @@
 import { describe, expect, test } from "vitest";
-import { ConsecutiveSuccesses } from "../src/ConsecutiveSuccesses.js";
 import { Grade } from "../src/Grade.js";
-import { MemoryStrength } from "../src/MemoryStrength.js";
-import { ReviewInterval } from "../src/ReviewInterval.js";
 import { Schedule } from "../src/Schedule.js";
 
 describe("Schedule", () => {
 	describe("SM-2 spaced repetition algorithm", () => {
 		test("failing a card resets schedule to start over tomorrow", () => {
-			const wellLearnedCard = new Schedule(
-				new ConsecutiveSuccesses(5),
-				new MemoryStrength(2.5),
-				new ReviewInterval(30),
-			);
+			const forNewCard = Schedule.forNewCard();
+			const afterFirstSuccess = forNewCard.recalculateAfterReview(new Grade(4));
+			const afterSecondSuccess = afterFirstSuccess.recalculateAfterReview(new Grade(4));
+			const afterFailure = afterSecondSuccess.recalculateAfterReview(new Grade(2));
 
-			const afterFailing = wellLearnedCard.recalculateAfterReview(new Grade(2));
-
-			expect(afterFailing.consecutiveSuccesses.count).toBe(0);
-			expect(afterFailing.reviewInterval.days).toBe(1);
+			expect(afterFailure.consecutiveSuccesses.count).toBe(0);
+			expect(afterFailure.reviewInterval.days).toBe(1);
 		});
 
 		test("first correct response schedules review for tomorrow", () => {
-			const newCard = new Schedule();
-
-			const afterFirstSuccess = newCard.recalculateAfterReview(new Grade(4));
+			const forNewCard = Schedule.forNewCard();
+			const afterFirstSuccess = forNewCard.recalculateAfterReview(new Grade(4));
 
 			expect(afterFirstSuccess.consecutiveSuccesses.count).toBe(1);
 			expect(afterFirstSuccess.reviewInterval.days).toBe(1);
 		});
 
 		test("second correct response schedules review in 6 days", () => {
-			const cardSeenOnce = new Schedule(
-				new ConsecutiveSuccesses(1),
-				new MemoryStrength(2.5),
-				new ReviewInterval(1),
-			);
-
-			const afterSecondSuccess = cardSeenOnce.recalculateAfterReview(new Grade(4));
+			const forNewCard = Schedule.forNewCard();
+			const afterFirstSuccess = forNewCard.recalculateAfterReview(new Grade(4));
+			const afterSecondSuccess = afterFirstSuccess.recalculateAfterReview(new Grade(4));
 
 			expect(afterSecondSuccess.consecutiveSuccesses.count).toBe(2);
 			expect(afterSecondSuccess.reviewInterval.days).toBe(6);
 		});
 
 		test("third correct response and beyond extends interval by memory strength factor", () => {
-			const cardSeenTwice = new Schedule(
-				new ConsecutiveSuccesses(2),
-				new MemoryStrength(2.5),
-				new ReviewInterval(6),
-			);
-
-			const afterThirdSuccess = cardSeenTwice.recalculateAfterReview(new Grade(4));
+			const forNewCard = Schedule.forNewCard();
+			const afterFirstSuccess = forNewCard.recalculateAfterReview(new Grade(4));
+			const afterSecondSuccess = afterFirstSuccess.recalculateAfterReview(new Grade(4));
+			const afterThirdSuccess = afterSecondSuccess.recalculateAfterReview(new Grade(4));
 
 			expect(afterThirdSuccess.consecutiveSuccesses.count).toBe(3);
 			expect(afterThirdSuccess.reviewInterval.days).toBe(15);
 		});
 
-		test("stronger memory extends intervals more aggressively", () => {
-			const baseSchedule = new Schedule(
-				new ConsecutiveSuccesses(2),
-				new MemoryStrength(2.5),
-				new ReviewInterval(10),
-			);
-			const strongerMemory = new Schedule(
-				new ConsecutiveSuccesses(2),
-				new MemoryStrength(4.0),
-				new ReviewInterval(10),
-			);
+		test("stronger memory extends intervals faster", () => {
+			const forNewCard = Schedule.forNewCard();
 
-			const normalGrowth = baseSchedule.recalculateAfterReview(new Grade(4));
-			const acceleratedGrowth = strongerMemory.recalculateAfterReview(new Grade(4));
+			const perfect1 = forNewCard.recalculateAfterReview(new Grade(5));
+			const perfect2 = perfect1.recalculateAfterReview(new Grade(5));
+			const perfect3 = perfect2.recalculateAfterReview(new Grade(5));
 
-			expect(normalGrowth.reviewInterval.days).toBe(25);
-			expect(acceleratedGrowth.reviewInterval.days).toBe(40);
+			const minimal1 = forNewCard.recalculateAfterReview(new Grade(3));
+			const minimal2 = minimal1.recalculateAfterReview(new Grade(3));
+			const minimal3 = minimal2.recalculateAfterReview(new Grade(3));
+
+			expect(perfect3.reviewInterval.days).toBeGreaterThan(minimal3.reviewInterval.days);
 		});
 	});
 });

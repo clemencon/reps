@@ -1,32 +1,44 @@
 import { ConsecutiveSuccesses } from "./ConsecutiveSuccesses.js";
+import { DateReviewed } from "./DateReviewed.js";
 import type { Grade } from "./Grade.js";
 import { MemoryStrength } from "./MemoryStrength.js";
 import { ReviewInterval } from "./ReviewInterval.js";
 
 export class Schedule {
-	public constructor(
-		public readonly consecutiveSuccesses: ConsecutiveSuccesses = new ConsecutiveSuccesses(),
-		public readonly memoryStrength: MemoryStrength = new MemoryStrength(),
-		public readonly reviewInterval: ReviewInterval = new ReviewInterval(),
-	) {}
+	public static forNewCard(): Schedule {
+		const consecutiveSuccesses = new ConsecutiveSuccesses();
+		const memoryStrength = new MemoryStrength();
+		const reviewInterval = new ReviewInterval();
+		const dateReviewed = null;
+		return new Schedule(consecutiveSuccesses, memoryStrength, reviewInterval, dateReviewed);
+	}
 
 	public recalculateAfterReview(grade: Grade): Schedule {
 		if (grade.isCorrect) return this.recalculateAfterSuccess(grade);
 		return this.recalculateAfterFailure(grade);
 	}
 
+	private constructor(
+		public readonly consecutiveSuccesses: ConsecutiveSuccesses,
+		public readonly memoryStrength: MemoryStrength,
+		public readonly reviewInterval: ReviewInterval,
+		public readonly lastReview: DateReviewed | null,
+	) {}
+
 	private recalculateAfterSuccess(grade: Grade): Schedule {
 		const consecutiveSuccesses = this.consecutiveSuccesses.increment();
 		const memoryStrength = this.memoryStrength.recalculateAfterReview(grade);
 		const reviewInterval = this.recalculateReviewInterval();
-		return new Schedule(consecutiveSuccesses, memoryStrength, reviewInterval);
+		const dateReviewed = DateReviewed.today();
+		return new Schedule(consecutiveSuccesses, memoryStrength, reviewInterval, dateReviewed);
 	}
 
 	private recalculateAfterFailure(grade: Grade): Schedule {
 		const consecutiveSuccesses = new ConsecutiveSuccesses();
 		const memoryStrength = this.memoryStrength.recalculateAfterReview(grade);
 		const reviewInterval = new ReviewInterval(1);
-		return new Schedule(consecutiveSuccesses, memoryStrength, reviewInterval);
+		const dateReviewed = DateReviewed.today();
+		return new Schedule(consecutiveSuccesses, memoryStrength, reviewInterval, dateReviewed);
 	}
 
 	private recalculateReviewInterval(): ReviewInterval {
