@@ -1,4 +1,4 @@
-import { describe, expect, test } from "vitest";
+import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 import { Grade } from "../src/Grade.js";
 import { Schedule } from "../src/Schedule.js";
 
@@ -53,6 +53,49 @@ describe("Schedule", () => {
 			const minimal3 = minimal2.recalculateAfterReview(new Grade(3));
 
 			expect(perfect3.reviewInterval.days).toBeGreaterThan(minimal3.reviewInterval.days);
+		});
+	});
+
+	describe("isDueForReview", () => {
+		beforeEach(() => vi.useFakeTimers());
+		afterEach(() => vi.useRealTimers());
+
+		const letDaysPass = (days: number): void => {
+			const oneDayMs = 24 * 60 * 60 * 1000;
+			vi.advanceTimersByTime(days * oneDayMs);
+		};
+
+		test("a new card that has never been studied is due for review", () => {
+			const schedule = Schedule.forNewCard();
+			expect(schedule.isDueForReview()).toBe(true);
+		});
+
+		test("a card reviewed today is not due when interval has not passed", () => {
+			const schedule = Schedule.forNewCard().recalculateAfterReview(new Grade(4));
+
+			expect(schedule.isDueForReview()).toBe(false);
+		});
+
+		test("card becomes due when days since review meets interval", () => {
+			const schedule = Schedule.forNewCard().recalculateAfterReview(new Grade(4));
+
+			letDaysPass(1);
+
+			expect(schedule.isDueForReview()).toBe(true);
+		});
+
+		test("card with longer interval is not due until interval passes", () => {
+			const afterFirstReview = Schedule.forNewCard().recalculateAfterReview(new Grade(4));
+			const afterSecondReview = afterFirstReview.recalculateAfterReview(new Grade(4));
+
+			expect(afterSecondReview.reviewInterval.days).toBe(6);
+			expect(afterSecondReview.isDueForReview()).toBe(false);
+
+			letDaysPass(5);
+			expect(afterSecondReview.isDueForReview()).toBe(false);
+
+			letDaysPass(1);
+			expect(afterSecondReview.isDueForReview()).toBe(true);
 		});
 	});
 });

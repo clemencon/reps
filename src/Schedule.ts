@@ -13,6 +13,11 @@ export class Schedule {
 		return new Schedule(consecutiveSuccesses, memoryStrength, reviewInterval, dateReviewed);
 	}
 
+	public isDueForReview(): boolean {
+		if (!this.hasBeenStudied()) return true;
+		return this.lastReview.daysSinceReview >= this.reviewInterval.days;
+	}
+
 	public recalculateAfterReview(grade: Grade): Schedule {
 		if (grade.isCorrect) return this.recalculateAfterSuccess(grade);
 		return this.recalculateAfterFailure(grade);
@@ -24,6 +29,10 @@ export class Schedule {
 		public readonly reviewInterval: ReviewInterval,
 		public readonly lastReview: DateReviewed | null,
 	) {}
+
+	private hasBeenStudied(): this is { lastReview: DateReviewed } {
+		return this.lastReview !== null;
+	}
 
 	private recalculateAfterSuccess(grade: Grade): Schedule {
 		const consecutiveSuccesses = this.consecutiveSuccesses.increment();
