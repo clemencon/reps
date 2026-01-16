@@ -18,7 +18,7 @@ The code may look odd.
 
 ## Study Flow
 
-When you run `reps`, you see a topic tree showing cards due for review:
+When you run `reps`, you see a topic tree showing cards due for review (when implemented):
 
 ```
 $ reps
@@ -134,7 +134,7 @@ Cards you struggle with appear more frequently.
 Cards you master appear less often.
 Review intervals increase exponentially for well-remembered cards.
 
-## Architecture
+## Design Decisions
 
 - Cards and Topics: Plain text files in the filesystem (not in database)
 - Schedule: SQLite database tracking performance and review schedules
@@ -218,11 +218,3 @@ algorithm SM-2 is
 
 After all scheduled reviews are complete, SuperMemo asks the user to re-review any cards they marked
 with a grade less than 4 repeatedly until they give a grade ≥ 4.
-
-## Stack
-
-- [Node.js 24.12.0 ](https://nodejs.org/en/download)
-- [pnpm](https://pnpm.io/motivation)
-- [vitest](https://vitest.dev/guide/)
-- [Biome](https://biomejs.dev/guides/getting-started/)
-- [Ink](https://github.com/vadimdemedes/ink?tab=readme-ov-file#getting-started)
