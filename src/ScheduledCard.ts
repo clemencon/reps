@@ -1,12 +1,16 @@
 import type { Card } from "./Card.js";
 import type { Grade } from "./Grade.js";
-import type { Schedule } from "./Schedule.js";
+import { Schedule } from "./Schedule.js";
 
 export class ScheduledCard {
 	public constructor(
 		public readonly card: Card,
 		public readonly schedule: Schedule,
 	) {}
+
+	public static fromUnreviewed(card: Card): ScheduledCard {
+		return new ScheduledCard(card, Schedule.forNewCard());
+	}
 
 	public isDueForReview(): boolean {
 		return this.schedule.isDueForReview();
