@@ -3,4 +3,5 @@ import type { ScheduledCard } from "./ScheduledCard.js";
 
 export interface ScheduleTracker {
 	getFor(card: Card): ScheduledCard;
+	saveFor(card: ScheduledCard): void;
 }
