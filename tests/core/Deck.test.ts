@@ -1,8 +1,8 @@
 import { describe, expect, test } from "vitest";
-import { Card } from "../src/Card.js";
-import { Deck } from "../src/Deck.js";
-import { Schedule } from "../src/Schedule.js";
-import { ScheduledCard } from "../src/ScheduledCard.js";
+import { Card } from "../../src/core/Card.js";
+import { Deck } from "../../src/core/Deck.js";
+import { Schedule } from "../../src/core/Schedule.js";
+import { ScheduledCard } from "../../src/core/ScheduledCard.js";
 
 describe("Deck", () => {
 	test("contains cards", () => {

@@ -1,5 +1,5 @@
 import { describe, expect, test } from "vitest";
-import { DateReviewed } from "../src/DateReviewed.js";
+import { DateReviewed } from "../../src/core/DateReviewed.js";
 
 describe("DateReviewed", () => {
 	test("today() captures current date", () => {

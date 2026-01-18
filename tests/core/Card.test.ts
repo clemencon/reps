@@ -1,5 +1,5 @@
 import { describe, expect, test } from "vitest";
-import { Card } from "../src/Card.js";
+import { Card } from "../../src/core/Card.js";
 
 describe("Card", () => {
 	test("has a question and answer", () => {
