@@ -24,6 +24,7 @@
 		"vitest": "4.0.16"
 	},
 	"dependencies": {
-		"better-sqlite3": "12.5.0"
+		"better-sqlite3": "12.5.0",
+		"memfs": "4.51.1"
 	}
 }
