@@ -12,6 +12,10 @@ export class ScheduledCard {
 		return new ScheduledCard(card, Schedule.forNewCard());
 	}
 
+	public get id(): string {
+		return this.card.id;
+	}
+
 	public isDueForReview(): boolean {
 		return this.schedule.isDueForReview();
 	}

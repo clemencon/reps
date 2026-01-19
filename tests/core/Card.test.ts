@@ -17,4 +17,25 @@ describe("Card", () => {
 		expect(() => new Card("What is the answer?", "")).toThrowError("Answer cannot be blank.");
 		expect(() => new Card("What is the answer?", "   ")).toThrowError("Answer cannot be blank.");
 	});
+
+	test("has a content-based id", () => {
+		const card = new Card("What is the answer?", "Some answer.");
+		expect(typeof card.id).toBe("string");
+		expect(card.id).toHaveLength(8);
+	});
+
+	test("has the same id for identical content", () => {
+		const card1 = new Card("What is the answer?", "Some answer.");
+		const card2 = new Card("What is the answer?", "Some answer.");
+		expect(card1.id).toBe(card2.id);
+	});
+
+	test("has different ids for different content", () => {
+		const card1 = new Card("What is the answer?", "Some answer.");
+		const card2 = new Card("What is the answer?", "Different answer.");
+		const card3 = new Card("Different question?", "Some answer.");
+		expect(card1.id).not.toBe(card2.id);
+		expect(card1.id).not.toBe(card3.id);
+		expect(card2.id).not.toBe(card3.id);
+	});
 });
