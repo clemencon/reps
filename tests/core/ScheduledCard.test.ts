@@ -15,9 +15,9 @@ describe("ScheduledCard", () => {
 		const card = new Card("What is the answer?", "Some answer.");
 		const scheduledCard = ScheduledCard.fromUnreviewed(card);
 
-		const evaluated = scheduledCard.selfEvaluate(new Grade(4));
+		const evaluatedCard = scheduledCard.selfEvaluate(new Grade(4));
 
-		expect(evaluated.schedule.lastReview).not.toBeNull(); // ju: Fix this.
+		expect(evaluatedCard.isDueForReview()).toBe(false);
 	});
 
 	test("scheduled card identity is derived from the flashcard content", () => {
