@@ -13,6 +13,20 @@ export class Schedule {
 		return new Schedule(consecutiveSuccesses, memoryStrength, reviewInterval, dateReviewed);
 	}
 
+	public static parse(
+		consecutiveSuccesses: number,
+		memoryStrength: number,
+		reviewInterval: number,
+		lastReview: string,
+	): Schedule {
+		return new Schedule(
+			new ConsecutiveSuccesses(consecutiveSuccesses),
+			new MemoryStrength(memoryStrength),
+			new ReviewInterval(reviewInterval),
+			DateReviewed.fromIsoDateString(lastReview),
+		);
+	}
+
 	public isDueForReview(): boolean {
 		if (!this.hasBeenStudied()) return true;
 		return this.lastReview.daysSinceReview >= this.reviewInterval.days;
