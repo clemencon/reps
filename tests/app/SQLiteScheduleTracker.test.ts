@@ -47,45 +47,44 @@ describe("SQLiteScheduleTracker (in-memory)", () => {
 
 		expect(restored.lastReview).toBeNull();
 	});
-
-	test("returns empty record when no schedules are stored", () => {
-		const all = scheduleTracker.getAll();
-
-		expect(all).toEqual({});
-	});
-
-	test("returns all stored schedules", () => {
-		const card1 = new Card("Question 1?", "Answer 1");
-		const card2 = new Card("Question 2?", "Answer 2");
-		const reviewed1 = card1.selfEvaluate(new Grade(4));
-		const reviewed2 = card2.selfEvaluate(new Grade(5));
-		if (reviewed1.schedule === null || reviewed2.schedule === null) {
-			throw new Error("Expected schedules to exist after review");
-		}
-		scheduleTracker.store(reviewed1.schedule, card1.id);
-		scheduleTracker.store(reviewed2.schedule, card2.id);
-
-		const all = scheduleTracker.getAll();
-
-		expect(Object.keys(all)).toHaveLength(2);
-		expect(all[card1.id]?.consecutiveSuccesses.count).toBe(
-			reviewed1.schedule?.consecutiveSuccesses.count,
-		);
-		expect(all[card2.id]?.consecutiveSuccesses.count).toBe(
-			reviewed2.schedule?.consecutiveSuccesses.count,
-		);
-	});
 });
 
 describe("SQLiteScheduleTracker (filesystem)", () => {
-	test("creates the database directory if it does not exist", () => {
-		const testDir = join(tmpdir(), `reps-test-${Date.now()}`);
-		const dbPath = join(testDir, "test.db");
+	let testDir: string;
+	let dbPath: string;
+	let tracker: SQLiteScheduleTracker;
 
-		const tracker = new SQLiteScheduleTracker(dbPath);
+	beforeEach(() => {
+		testDir = join(tmpdir(), `reps-test-${Date.now()}`);
+		dbPath = join(testDir, "test.db");
+		tracker = new SQLiteScheduleTracker(dbPath);
+	});
 
-		expect(existsSync(testDir)).toBe(true);
+	afterEach(() => {
 		tracker.close();
 		rmSync(testDir, { recursive: true });
+	});
+
+	test("creates the database directory if it does not exist", () => {
+		expect(existsSync(testDir)).toBe(true);
+	});
+
+	test("loads schedules into cache on initialization", () => {
+		const card = new Card("What is 5+5?", "10");
+		const reviewed = card.selfEvaluate(new Grade(4));
+
+		if (reviewed.schedule === null) throw new Error("Expected schedule to exist after review");
+
+		tracker.store(reviewed.schedule, card.id);
+		tracker.close();
+
+		const restoredTracker = new SQLiteScheduleTracker(dbPath);
+		const restored = restoredTracker.get(card.id);
+
+		expect(restored.consecutiveSuccesses.count).toBe(reviewed.schedule.consecutiveSuccesses.count);
+		expect(restored.memoryStrength.value).toBe(reviewed.schedule.memoryStrength.value);
+		expect(restored.reviewInterval.days).toBe(reviewed.schedule.reviewInterval.days);
+
+		restoredTracker.close();
 	});
 });

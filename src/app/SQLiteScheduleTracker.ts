@@ -6,11 +6,17 @@ import type { ScheduleTracker } from "../core/ScheduleTracker.js";
 
 export class SQLiteScheduleTracker implements ScheduleTracker {
 	private readonly db: Database.Database;
+	private readonly cachedSchedules: SchedulesCache;
 
 	public constructor(databasePath: string) {
 		this.ensureDirectoryExists(databasePath);
 		this.db = new Database(databasePath);
 		this.initializeSchema();
+		this.cachedSchedules = this.getAll();
+	}
+
+	public get(cardId: string): Schedule {
+		return this.cachedSchedules[cardId] ?? Schedule.forNewCard();
 	}
 
 	public store(schedule: Schedule, cardId: string): void {
@@ -19,7 +25,13 @@ export class SQLiteScheduleTracker implements ScheduleTracker {
 		this.db
 			.prepare(`
 			INSERT INTO schedule (card_id, consecutive_successes, memory_strength, review_interval_days, reviewed_on)
-			VALUES ('${cardId}', ${schedule.consecutiveSuccesses.count}, ${schedule.memoryStrength.value}, ${schedule.reviewInterval.days}, '${schedule.lastReview.toIsoString()}')
+			VALUES (
+				'${cardId}',
+				${schedule.consecutiveSuccesses.count},
+				${schedule.memoryStrength.value},
+				${schedule.reviewInterval.days},
+				'${schedule.lastReview.toIsoString()}'
+		    )
 			ON CONFLICT(card_id) DO UPDATE SET
 				consecutive_successes = excluded.consecutive_successes,
 				memory_strength = excluded.memory_strength,
@@ -28,37 +40,14 @@ export class SQLiteScheduleTracker implements ScheduleTracker {
 				updated_at = CURRENT_TIMESTAMP
 		`)
 			.run();
+		this.cachedSchedules[cardId] = schedule;
 	}
 
-	public get(cardId: string): Schedule {
-		const row = this.db
-			.prepare<
-				[],
-				{
-					card_id: string;
-					consecutive_successes: number;
-					memory_strength: number;
-					review_interval_days: number;
-					reviewed_on: string;
-				}
-			>(`
-			SELECT card_id, consecutive_successes, memory_strength, review_interval_days, reviewed_on
-			FROM schedule
-			WHERE card_id = '${cardId}'
-		`)
-			.get();
-
-		if (row === undefined) return Schedule.forNewCard();
-
-		return Schedule.parse(
-			row.consecutive_successes,
-			row.memory_strength,
-			row.review_interval_days,
-			row.reviewed_on,
-		);
+	public close(): void {
+		this.db.close();
 	}
 
-	public getAll(): Record<string, Schedule> {
+	private getAll(): SchedulesCache {
 		const rows = this.db
 			.prepare<
 				[],
@@ -75,7 +64,7 @@ export class SQLiteScheduleTracker implements ScheduleTracker {
 		`)
 			.all();
 
-		const result: Record<string, Schedule> = {};
+		const result: SchedulesCache = {};
 		for (const row of rows) {
 			result[row.card_id] = Schedule.parse(
 				row.consecutive_successes,
@@ -85,10 +74,6 @@ export class SQLiteScheduleTracker implements ScheduleTracker {
 			);
 		}
 		return result;
-	}
-
-	public close(): void {
-		this.db.close();
 	}
 
 	private ensureDirectoryExists(databasePath: string): void {
@@ -109,3 +94,5 @@ export class SQLiteScheduleTracker implements ScheduleTracker {
 		)`);
 	}
 }
+
+type SchedulesCache = Record<string, Schedule>;
