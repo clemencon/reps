@@ -1,7 +1,7 @@
-import type { Card } from "./Card.js";
-import type { Deck } from "./Deck.js";
+import type { Schedule } from "./Schedule.js";
 
 export interface ScheduleTracker {
-	getFor(deck: Deck): Deck;
-	saveFor(card: Card): void;
+	store(schedule: Schedule, cardId: string): void;
+	get(cardId: string): Schedule;
+	getAll(): Record<string, Schedule>;
 }
