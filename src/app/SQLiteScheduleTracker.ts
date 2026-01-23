@@ -1,10 +1,9 @@
 import { mkdirSync } from "node:fs";
 import { dirname } from "node:path";
 import Database from "better-sqlite3";
-import type { Card } from "../core/Card.js";
+import { Card } from "../core/Card.js";
 import { Deck } from "../core/Deck.js";
 import { Schedule } from "../core/Schedule.js";
-import { ScheduledCard } from "../core/ScheduledCard.js";
 import type { ScheduleTracker } from "../core/ScheduleTracker.js";
 
 export class SQLiteScheduleTracker implements ScheduleTracker {
@@ -16,13 +15,13 @@ export class SQLiteScheduleTracker implements ScheduleTracker {
 		this.initializeSchema();
 	}
 
-	public getFor(...cards: Card[]): Deck {
-		const scheduledCards = cards.map((card) => this.loadOrCreateSchedule(card));
-		return new Deck(...scheduledCards);
+	public getFor(deck: Deck): Deck {
+		const cardsWithSchedule = deck.cards.map((card) => this.loadOrCreateSchedule(card));
+		return new Deck(...cardsWithSchedule);
 	}
 
-	public saveFor(card: ScheduledCard): void {
-		if (card.schedule.lastReview === null) return; // Unscheduled cards need review anyway.
+	public saveFor(card: Card): void {
+		if (card.schedule === null || card.schedule.lastReview === null) return; // Unscheduled cards need review anyway.
 
 		this.db
 			.prepare(`
@@ -60,7 +59,7 @@ export class SQLiteScheduleTracker implements ScheduleTracker {
 		)`);
 	}
 
-	private loadOrCreateSchedule(card: Card): ScheduledCard {
+	private loadOrCreateSchedule(card: Card): Card {
 		const row = this.db
 			.prepare<
 				[],
@@ -78,10 +77,11 @@ export class SQLiteScheduleTracker implements ScheduleTracker {
 		`)
 			.get();
 
-		if (row === undefined) return ScheduledCard.fromUnreviewed(card);
+		if (row === undefined) return card;
 
-		return new ScheduledCard(
-			card,
+		return new Card(
+			card.question,
+			card.answer,
 			Schedule.parse(
 				row.consecutive_successes,
 				row.memory_strength,

@@ -4,8 +4,8 @@ import { join } from "node:path";
 import { afterEach, beforeEach, describe, expect, test } from "vitest";
 import { SQLiteScheduleTracker } from "../../src/app/SQLiteScheduleTracker.js";
 import { Card } from "../../src/core/Card.js";
+import { Deck } from "../../src/core/Deck.js";
 import { Grade } from "../../src/core/Grade.js";
-import { ScheduledCard } from "../../src/core/ScheduledCard.js";
 
 describe("SQLiteScheduleTracker", () => {
 	let scheduleTracker: SQLiteScheduleTracker;
@@ -21,38 +21,36 @@ describe("SQLiteScheduleTracker", () => {
 	test("returns unreviewed schedules for cards not yet tracked", () => {
 		const card = new Card("What is 2+2?", "4");
 
-		const deck = scheduleTracker.getFor(card);
+		const deck = scheduleTracker.getFor(new Deck(card));
 
-		const [scheduledCard] = [...deck];
-		expect(scheduledCard?.isDueForReview()).toBe(true);
+		const [restoredCard] = [...deck];
+		expect(restoredCard?.isDueForReview()).toBe(true);
 	});
 
 	test("restores previously saved schedules", () => {
 		const card = new Card("What is 2+2?", "4");
-		const unreviewed = ScheduledCard.fromUnreviewed(card);
-		const reviewed = unreviewed.selfEvaluate(new Grade(4));
+		const reviewed = card.selfEvaluate(new Grade(4));
 		scheduleTracker.saveFor(reviewed);
 
-		const deck = scheduleTracker.getFor(card);
+		const deck = scheduleTracker.getFor(new Deck(card));
 
 		const [restored] = [...deck];
-		expect(restored?.schedule.consecutiveSuccesses.count).toBe(
-			reviewed.schedule.consecutiveSuccesses.count,
+		expect(restored?.schedule?.consecutiveSuccesses.count).toBe(
+			reviewed.schedule?.consecutiveSuccesses.count,
 		);
-		expect(restored?.schedule.memoryStrength.value).toBe(reviewed.schedule.memoryStrength.value);
-		expect(restored?.schedule.reviewInterval.days).toBe(reviewed.schedule.reviewInterval.days);
+		expect(restored?.schedule?.memoryStrength.value).toBe(reviewed.schedule?.memoryStrength.value);
+		expect(restored?.schedule?.reviewInterval.days).toBe(reviewed.schedule?.reviewInterval.days);
 	});
 
 	test("does not persist cards that have never been reviewed", () => {
 		const card = new Card("What is 2+2?", "4");
-		const unreviewed = ScheduledCard.fromUnreviewed(card);
-		scheduleTracker.saveFor(unreviewed);
+		scheduleTracker.saveFor(card);
 
-		const deck = scheduleTracker.getFor(card);
+		const deck = scheduleTracker.getFor(new Deck(card));
 
 		const [restored] = [...deck];
 		expect(restored).toBeDefined();
-		expect(restored?.schedule.lastReview).toBeNull();
+		expect(restored?.schedule).toBeNull();
 	});
 
 	test("creates the database directory if it does not exist", () => {

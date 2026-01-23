@@ -1,13 +1,13 @@
-import type { ScheduledCard } from "./ScheduledCard.js";
+import type { Card } from "./Card.js";
 
 export class Deck {
-	public readonly cards: ReadonlyArray<ScheduledCard>;
+	public readonly cards: ReadonlyArray<Card>;
 
-	public constructor(...cards: ScheduledCard[]) {
+	public constructor(...cards: Card[]) {
 		this.cards = cards;
 	}
 
-	public [Symbol.iterator](): Iterator<ScheduledCard> {
+	public [Symbol.iterator](): Iterator<Card> {
 		return this.cards[Symbol.iterator]();
 	}
 }
