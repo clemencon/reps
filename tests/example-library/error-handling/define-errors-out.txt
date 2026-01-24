@@ -1,0 +1,3 @@
+What is the key strategy for simplifying exception handling according to Ousterhout's "define errors out of existence" approach?
+???
+Reduce the number of places where exceptions must be handled by modifying operation semantics so that normal behavior handles all situations without exceptional conditions.

@@ -1,0 +1,3 @@
+What makes exception handling code particularly unreliable in production systems?
+???
+Exception handling code rarely executes in running systems and is difficult to test, so bugs often go undetected until the code is actually needed and then frequently fails to work properly.

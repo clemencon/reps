@@ -1,0 +1,3 @@
+Why does exception handling code contribute disproportionately to complexity in software systems?
+???
+Exception handling code is inherently more difficult to write than normal-case code because it disrupts normal flow and often creates opportunities for additional exceptions during recovery.

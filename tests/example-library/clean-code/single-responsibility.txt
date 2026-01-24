@@ -1,0 +1,3 @@
+What is the key principle for keeping functions clean and maintainable?
+???
+Functions should do one thing well and have a single reason to change, making them easier to understand, test, and modify.

@@ -1,0 +1,3 @@
+What makes a function name "clean" and easy to understand?
+???
+A clean function name should clearly express what the function does using descriptive verbs and nouns, avoiding abbreviations and ambiguous terms.
