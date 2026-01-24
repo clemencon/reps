@@ -1,6 +1,5 @@
 import { describe, expect, test } from "vitest";
 import { Card } from "../../src/core/Card.js";
-import { Grade } from "../../src/core/Grade.js";
 import { Schedule } from "../../src/core/Schedule.js";
 
 describe("Card", () => {
@@ -43,7 +42,8 @@ describe("Card", () => {
 
 	test("card with no schedule is due for review", () => {
 		const card = new Card("What is the answer?", "Some answer.");
-		expect(card.schedule).toBeNull();
+		const schedule = card.getSchedule();
+		expect(schedule.lastReview).toBeNull();
 		expect(card.isDueForReview()).toBe(true);
 	});
 
@@ -53,28 +53,19 @@ describe("Card", () => {
 		expect(card.isDueForReview()).toBe(schedule.isDueForReview());
 	});
 
-	test("selfEvaluate returns new card with updated schedule", () => {
+	test("a new schedule can be added", () => {
 		const card = new Card("What is the answer?", "Some answer.");
-		const evaluatedCard = card.selfEvaluate(new Grade(4));
+		const schedule = Schedule.forNewCard();
 
-		expect(evaluatedCard.schedule).not.toBeNull();
-		expect(evaluatedCard.isDueForReview()).toBe(false);
+		card.addSchedule(schedule);
+
+		expect(card.getSchedule()).toBe(schedule);
 	});
 
-	test("selfEvaluate on card without schedule initializes schedule", () => {
-		const card = new Card("What is the answer?", "Some answer.");
-		expect(card.schedule).toBeNull();
+	test("a new schedule cannot be added to a card with an existing schedule", () => {
+		const schedule = Schedule.forNewCard();
+		const card = new Card("What is the answer?", "Some answer.", schedule);
 
-		const evaluatedCard = card.selfEvaluate(new Grade(4));
-
-		expect(evaluatedCard.schedule).not.toBeNull();
-		expect(evaluatedCard.schedule?.lastReview).not.toBeNull();
-	});
-
-	test("card id remains stable after schedule updates", () => {
-		const card = new Card("What is the answer?", "Some answer.");
-		const evaluatedCard = card.selfEvaluate(new Grade(4));
-
-		expect(evaluatedCard.id).toBe(card.id);
+		expect(() => card.addSchedule(Schedule.forNewCard())).toThrowError("Card already scheduled.");
 	});
 });

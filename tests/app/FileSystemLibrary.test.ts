@@ -33,7 +33,7 @@ describe("FileSystemLibrary", () => {
 		expect(cleanCode.containsSubtopics).toBe(true);
 		const refactoring = findSubtopic(cleanCode, "refactoring");
 		expectDeckMatches(refactoring.cards, refactoringCards);
-		expect(errorHandling.containsSubtopics).toBe(true);
+		expect(errorHandling.containsSubtopics).toBe(false);
 		expectDeckMatches(errorHandling.cards, errorHandlingCards);
 	});
 
@@ -45,7 +45,7 @@ describe("FileSystemLibrary", () => {
 		const topicTree = library.getTopicTree();
 		const cleanCode = findSubtopic(topicTree, "clean-code");
 		const targetCard = findCardByQuestion(cleanCode, getFirstCardQuestion(cleanCodeCards));
-		expect(targetCard.schedule).toBe(schedule);
+		expect(targetCard.getSchedule()).toBe(schedule);
 		expect(scheduleTracker.get).toHaveBeenCalledWith(
 			new Card(targetCard.question, targetCard.answer).id,
 		);

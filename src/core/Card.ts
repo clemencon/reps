@@ -8,11 +8,11 @@ export class Card {
 	public constructor(
 		public readonly question: string,
 		public readonly answer: string,
-		public readonly schedule: Schedule | null = null,
+		private schedule: Schedule | null = null,
 	) {
 		Card.validateQuestion(question);
 		Card.validateAnswer(answer);
-		this.id = this.contentBasedId();
+		this.id = this.contentBasedId(`${question}${answer}`);
 	}
 
 	public isDueForReview(): boolean {
@@ -20,10 +20,18 @@ export class Card {
 		return this.schedule.isDueForReview();
 	}
 
-	public selfEvaluate(grade: Grade): Card {
+	public getSchedule(): Schedule {
+		return this.schedule ?? Schedule.forNewCard();
+	}
+
+	public addSchedule(newSchedule: Schedule): void {
+		if (this.schedule) throw new Error("Card already scheduled.");
+		this.schedule = newSchedule;
+	}
+
+	public selfEvaluate(grade: Grade): void {
 		const currentSchedule = this.schedule ?? Schedule.forNewCard();
-		const newSchedule = currentSchedule.recalculateAfterReview(grade);
-		return new Card(this.question, this.answer, newSchedule);
+		this.schedule = currentSchedule.recalculateAfterReview(grade);
 	}
 
 	private static validateQuestion(question: string): void {
@@ -34,7 +42,7 @@ export class Card {
 		if (!answer.trim()) throw new Error("Answer cannot be blank.");
 	}
 
-	private contentBasedId(): string {
-		return createHash("sha1").update(`${this.question}${this.answer}`).digest("hex").slice(0, 8);
+	private contentBasedId(content: string): string {
+		return createHash("sha1").update(content).digest("hex").slice(0, 8);
 	}
 }

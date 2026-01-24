@@ -27,8 +27,8 @@ describe("SQLiteScheduleTracker (in-memory)", () => {
 
 	test("restores previously stored schedules", () => {
 		const card = new Card("What is 2+2?", "4");
-		const reviewed = card.selfEvaluate(new Grade(4));
-		const reviewedSchedule = reviewed.schedule;
+		card.selfEvaluate(new Grade(4));
+		const reviewedSchedule = card.getSchedule();
 		if (reviewedSchedule === null) throw new Error("Expected schedule to exist after review");
 		scheduleTracker.store(reviewedSchedule, card.id);
 
@@ -71,19 +71,20 @@ describe("SQLiteScheduleTracker (filesystem)", () => {
 
 	test("loads schedules into cache on initialization", () => {
 		const card = new Card("What is 5+5?", "10");
-		const reviewed = card.selfEvaluate(new Grade(4));
+		card.selfEvaluate(new Grade(4));
 
-		if (reviewed.schedule === null) throw new Error("Expected schedule to exist after review");
+		const reviewedSchedule = card.getSchedule();
+		if (reviewedSchedule === null) throw new Error("Expected schedule to exist after review");
 
-		tracker.store(reviewed.schedule, card.id);
+		tracker.store(reviewedSchedule, card.id);
 		tracker.close();
 
 		const restoredTracker = new SQLiteScheduleTracker(dbPath);
 		const restored = restoredTracker.get(card.id);
 
-		expect(restored.consecutiveSuccesses.count).toBe(reviewed.schedule.consecutiveSuccesses.count);
-		expect(restored.memoryStrength.value).toBe(reviewed.schedule.memoryStrength.value);
-		expect(restored.reviewInterval.days).toBe(reviewed.schedule.reviewInterval.days);
+		expect(restored.consecutiveSuccesses.count).toBe(reviewedSchedule.consecutiveSuccesses.count);
+		expect(restored.memoryStrength.value).toBe(reviewedSchedule.memoryStrength.value);
+		expect(restored.reviewInterval.days).toBe(reviewedSchedule.reviewInterval.days);
 
 		restoredTracker.close();
 	});
