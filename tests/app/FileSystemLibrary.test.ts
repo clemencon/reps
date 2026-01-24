@@ -26,15 +26,15 @@ describe("FileSystemLibrary", () => {
 		const topicTree = library.getTopicTree();
 
 		expect(topicTree.name).toBe("example-library");
-		expect(topicTree.cards.cards).toHaveLength(0);
+		expect(topicTree.deck.cards).toHaveLength(0);
 		const cleanCode = findSubtopic(topicTree, "clean-code");
 		const errorHandling = findSubtopic(topicTree, "error-handling");
-		expectDeckMatches(cleanCode.cards, cleanCodeCards);
+		expectDeckMatches(cleanCode.deck, cleanCodeCards);
 		expect(cleanCode.containsSubtopics).toBe(true);
 		const refactoring = findSubtopic(cleanCode, "refactoring");
-		expectDeckMatches(refactoring.cards, refactoringCards);
+		expectDeckMatches(refactoring.deck, refactoringCards);
 		expect(errorHandling.containsSubtopics).toBe(false);
-		expectDeckMatches(errorHandling.cards, errorHandlingCards);
+		expectDeckMatches(errorHandling.deck, errorHandlingCards);
 	});
 
 	test("applies the schedules from the schedule tracker", () => {
@@ -47,7 +47,7 @@ describe("FileSystemLibrary", () => {
 		const targetCard = findCardByQuestion(cleanCode, getFirstCardQuestion(cleanCodeCards));
 		expect(targetCard.getSchedule()).toBe(schedule);
 		expect(scheduleTracker.get).toHaveBeenCalledWith(
-			new Card(targetCard.question, targetCard.answer).id,
+			new Card(targetCard.question, targetCard.answer),
 		);
 	});
 
@@ -153,7 +153,7 @@ function findSubtopic(topic: Topic, name: string): Topic {
 }
 
 function findCardByQuestion(topic: Topic, question: string): Card {
-	const card = topic.cards.cards.find((entry) => entry.question === question);
+	const card = topic.deck.cards.find((entry) => entry.question === question);
 	if (!card) throw new Error(`Expected to find card with question ${question}.`);
 	return card;
 }

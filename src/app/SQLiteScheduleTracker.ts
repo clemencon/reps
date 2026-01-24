@@ -1,6 +1,7 @@
 import { mkdirSync } from "node:fs";
 import { dirname } from "node:path";
 import Database from "better-sqlite3";
+import type { Card } from "../core/Card.js";
 import { Schedule } from "../core/Schedule.js";
 import type { ScheduleTracker } from "../core/ScheduleTracker.js";
 
@@ -15,18 +16,20 @@ export class SQLiteScheduleTracker implements ScheduleTracker {
 		this.cachedSchedules = this.getAll();
 	}
 
-	public get(cardId: string): Schedule {
-		return this.cachedSchedules[cardId] ?? Schedule.forNewCard();
+	public get(card: Card): Schedule {
+		return this.cachedSchedules[card.id] ?? Schedule.forNewCard();
 	}
 
-	public store(schedule: Schedule, cardId: string): void {
-		if (schedule.lastReview === null) return;
+	public store(card: Card): void {
+		const schedule = card.getSchedule();
+
+		if (!schedule.hasBeenStudied()) return;
 
 		this.db
 			.prepare(`
 			INSERT INTO schedule (card_id, consecutive_successes, memory_strength, review_interval_days, reviewed_on)
 			VALUES (
-				'${cardId}',
+				'${card.id}',
 				${schedule.consecutiveSuccesses.count},
 				${schedule.memoryStrength.value},
 				${schedule.reviewInterval.days},
@@ -40,7 +43,7 @@ export class SQLiteScheduleTracker implements ScheduleTracker {
 				updated_at = CURRENT_TIMESTAMP
 		`)
 			.run();
-		this.cachedSchedules[cardId] = schedule;
+		this.cachedSchedules[card.id] = schedule;
 	}
 
 	public close(): void {

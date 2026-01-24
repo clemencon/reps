@@ -44,7 +44,7 @@ export class FileSystemLibrary implements Library {
 	private parseToCard(filePath: string): Card {
 		const { question, answer } = this.parseCardContent(filePath);
 		const preScheduleCard = new Card(question, answer);
-		const schedule = this.scheduleTracker.get(preScheduleCard.id);
+		const schedule = this.scheduleTracker.get(preScheduleCard);
 		return new Card(question, answer, schedule);
 	}
 

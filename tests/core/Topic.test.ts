@@ -10,7 +10,7 @@ describe("Topic", () => {
 		const topic = new Topic("Arithmetic", deck);
 
 		expect(topic.name).toBe("Arithmetic");
-		expect(topic.cards).toBe(deck);
+		expect(topic.deck).toBe(deck);
 	});
 
 	test("can contain subtopics", () => {

@@ -5,7 +5,6 @@ import { afterEach, beforeEach, describe, expect, test } from "vitest";
 import { SQLiteScheduleTracker } from "../../src/app/SQLiteScheduleTracker.js";
 import { Card } from "../../src/core/Card.js";
 import { Grade } from "../../src/core/Grade.js";
-import { Schedule } from "../../src/core/Schedule.js";
 
 describe("SQLiteScheduleTracker (in-memory)", () => {
 	let scheduleTracker: SQLiteScheduleTracker;
@@ -19,7 +18,8 @@ describe("SQLiteScheduleTracker (in-memory)", () => {
 	});
 
 	test("returns a new card schedule for untracked cards", () => {
-		const schedule = scheduleTracker.get("unknown-card-id");
+		const card = new Card("What is 1+1?", "2");
+		const schedule = scheduleTracker.get(card);
 
 		expect(schedule.isDueForReview()).toBe(true);
 		expect(schedule.lastReview).toBeNull();
@@ -30,9 +30,9 @@ describe("SQLiteScheduleTracker (in-memory)", () => {
 		card.selfEvaluate(new Grade(4));
 		const reviewedSchedule = card.getSchedule();
 		if (reviewedSchedule === null) throw new Error("Expected schedule to exist after review");
-		scheduleTracker.store(reviewedSchedule, card.id);
+		scheduleTracker.store(card);
 
-		const restored = scheduleTracker.get(card.id);
+		const restored = scheduleTracker.get(card);
 
 		expect(restored.consecutiveSuccesses.count).toBe(reviewedSchedule.consecutiveSuccesses.count);
 		expect(restored.memoryStrength.value).toBe(reviewedSchedule.memoryStrength.value);
@@ -40,10 +40,10 @@ describe("SQLiteScheduleTracker (in-memory)", () => {
 	});
 
 	test("does not persist schedules that have never been reviewed", () => {
-		const newCardSchedule = Schedule.forNewCard();
-		scheduleTracker.store(newCardSchedule, "card-id");
+		const card = new Card("What is 1+2?", "3");
+		scheduleTracker.store(card);
 
-		const restored = scheduleTracker.get("card-id");
+		const restored = scheduleTracker.get(card);
 
 		expect(restored.lastReview).toBeNull();
 	});
@@ -76,11 +76,11 @@ describe("SQLiteScheduleTracker (filesystem)", () => {
 		const reviewedSchedule = card.getSchedule();
 		if (reviewedSchedule === null) throw new Error("Expected schedule to exist after review");
 
-		tracker.store(reviewedSchedule, card.id);
+		tracker.store(card);
 		tracker.close();
 
 		const restoredTracker = new SQLiteScheduleTracker(dbPath);
-		const restored = restoredTracker.get(card.id);
+		const restored = restoredTracker.get(card);
 
 		expect(restored.consecutiveSuccesses.count).toBe(reviewedSchedule.consecutiveSuccesses.count);
 		expect(restored.memoryStrength.value).toBe(reviewedSchedule.memoryStrength.value);

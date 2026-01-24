@@ -44,7 +44,7 @@ export class Schedule {
 		public readonly lastReview: DateReviewed | null,
 	) {}
 
-	private hasBeenStudied(): this is { lastReview: DateReviewed } {
+	public hasBeenStudied(): this is { lastReview: DateReviewed } {
 		return this.lastReview !== null;
 	}
 
