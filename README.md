@@ -144,9 +144,6 @@ This hybrid approach keeps study material editable as plain text while maintaini
 
 ## Development
 
-- Domain-driven design with clear ubiquitous language
-- TDD, focusing on functionality over implementation
-
 ```bash
 # Build for production.
 pnpm build
