@@ -1,9 +1,9 @@
 import { describe, expect, test } from "vitest";
-import { ConsecutiveSuccesses } from "../../src/core/ConsecutiveSuccesses.js";
-import { Grade } from "../../src/core/Grade.js";
-import { MemoryStrength } from "../../src/core/MemoryStrength.js";
-import { ReviewInterval } from "../../src/core/ReviewInterval.js";
-import { Schedule } from "../../src/core/Schedule.js";
+import { ConsecutiveSuccesses } from "../../../src/core/scheduling/ConsecutiveSuccesses.js";
+import { Grade } from "../../../src/core/scheduling/Grade.js";
+import { MemoryStrength } from "../../../src/core/scheduling/MemoryStrength.js";
+import { ReviewInterval } from "../../../src/core/scheduling/ReviewInterval.js";
+import { Schedule } from "../../../src/core/scheduling/Schedule.js";
 
 const reviewGradeArguments = [0, 1, 2, 3, 4, 5];
 const consecutiveSuccessesArguments = [0, 1, 2, 3];

@@ -1,3 +1,0 @@
-What are the three main categories of code smells according to Martin Fowler?
-???
-Bloaters (code that has grown too large), Object-Orientation Abusers (incomplete or incorrect application of OOP principles), and Change Preventers (code that makes changes difficult).

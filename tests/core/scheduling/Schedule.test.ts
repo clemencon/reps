@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
-import { Grade } from "../../src/core/Grade.js";
-import { Schedule } from "../../src/core/Schedule.js";
+import { Grade } from "../../../src/core/scheduling/Grade.js";
+import { Schedule } from "../../../src/core/scheduling/Schedule.js";
 
 describe("Schedule", () => {
 	describe("SM-2 spaced repetition algorithm", () => {

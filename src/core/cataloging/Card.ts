@@ -1,6 +1,6 @@
 import { createHash } from "node:crypto";
-import type { Grade } from "./Grade.js";
-import { Schedule } from "./Schedule.js";
+import type { Grade } from "../scheduling/Grade.js";
+import { Schedule } from "../scheduling/Schedule.js";
 
 export class Card {
 	public readonly id: string;

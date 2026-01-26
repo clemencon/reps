@@ -1,5 +1,5 @@
 import { describe, expect, test } from "vitest";
-import { ConsecutiveSuccesses } from "../../src/core/ConsecutiveSuccesses.js";
+import { ConsecutiveSuccesses } from "../../../src/core/scheduling/ConsecutiveSuccesses.js";
 
 describe("ConsecutiveSuccesses", () => {
 	test("starts at zero by default", () => {

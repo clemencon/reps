@@ -16,42 +16,42 @@ describe("Config", () => {
 			const createdConfigFile = readFile("~/.config/reps.json");
 
 			expect(JSON.parse(createdConfigFile)).toEqual({
-				libraryPath: "~/reps",
+				catalogPath: "~/reps",
 				databasePath: "~/.local/share/reps/schedule.sqlite",
 			});
 		});
 
 		test("config file values override defaults", () => {
 			writeFile("~/.config/reps.json", {
-				libraryPath: "/custom/library",
+				catalogPath: "/custom/catalog",
 				databasePath: "/custom/database.sqlite",
 			});
 
 			const config = Config.load();
 
-			expect(config.libraryPath).toBe("/custom/library");
+			expect(config.catalogPath).toBe("/custom/catalog");
 			expect(config.databasePath).toBe("/custom/database.sqlite");
 		});
 
-		test("missing libraryPath in config uses default while databasePath is read from file", () => {
+		test("missing catalogPath in config uses default while databasePath is read from file", () => {
 			writeFile("~/.config/reps.json", {
 				databasePath: "/custom/database.sqlite",
 			});
 
 			const config = Config.load();
 
-			expect(config.libraryPath).toBe("~/reps");
+			expect(config.catalogPath).toBe("~/reps");
 			expect(config.databasePath).toBe("/custom/database.sqlite");
 		});
 
-		test("missing databasePath in config uses default while libraryPath is read from file", () => {
+		test("missing databasePath in config uses default while catalogPath is read from file", () => {
 			writeFile("~/.config/reps.json", {
-				libraryPath: "/custom/library",
+				catalogPath: "/custom/catalog",
 			});
 
 			const config = Config.load();
 
-			expect(config.libraryPath).toBe("/custom/library");
+			expect(config.catalogPath).toBe("/custom/catalog");
 			expect(config.databasePath).toBe("~/.local/share/reps/schedule.sqlite");
 		});
 
@@ -63,10 +63,10 @@ describe("Config", () => {
 			);
 		});
 
-		test("custom library path overrides default location", () => {
-			writeFile("~/.config/reps.json", { libraryPath: "/custom/library" });
+		test("custom catalog path overrides default location", () => {
+			writeFile("~/.config/reps.json", { catalogPath: "/custom/catalog" });
 			const config = Config.load();
-			expect(config.libraryPath).toBe("/custom/library");
+			expect(config.catalogPath).toBe("/custom/catalog");
 		});
 
 		test("custom database path overrides default location", () => {
@@ -83,7 +83,7 @@ describe("Config", () => {
 	});
 
 	describe("validation", () => {
-		test("empty string libraryPath throws validation error", () => {});
+		test("empty string catalogPath throws validation error", () => {});
 
 		test("empty string databasePath throws validation error", () => {});
 	});

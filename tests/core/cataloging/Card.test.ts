@@ -1,6 +1,6 @@
 import { describe, expect, test } from "vitest";
-import { Card } from "../../src/core/Card.js";
-import { Schedule } from "../../src/core/Schedule.js";
+import { Card } from "../../../src/core/cataloging/Card.js";
+import { Schedule } from "../../../src/core/scheduling/Schedule.js";
 
 describe("Card", () => {
 	test("has a question and answer", () => {

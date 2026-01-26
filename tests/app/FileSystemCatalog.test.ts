@@ -1,31 +1,33 @@
 import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
-import { FileSystemLibrary } from "../../src/app/FileSystemLibrary.js";
-import { Card } from "../../src/core/Card.js";
-import { Schedule } from "../../src/core/Schedule.js";
-import type { ScheduleTracker } from "../../src/core/ScheduleTracker.js";
-import type { Topic } from "../../src/core/Topic.js";
 
-describe("FileSystemLibrary", () => {
-	let temporaryLibraryPath: string | undefined;
+import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
+
+import { FileSystemCatalog } from "../../src/app/FileSystemCatalog.js";
+import { Card } from "../../src/core/cataloging/Card.js";
+import type { Topic } from "../../src/core/cataloging/Topic.js";
+import { Schedule } from "../../src/core/scheduling/Schedule.js";
+import type { ScheduleTracker } from "../../src/core/scheduling/ScheduleTracker.js";
+
+describe("FileSystemCatalog", () => {
+	let temporaryCatalogPath: string | undefined;
 
 	beforeEach(() => {
-		temporaryLibraryPath = undefined;
+		temporaryCatalogPath = undefined;
 	});
 
 	afterEach(() => {
-		if (temporaryLibraryPath) rmSync(temporaryLibraryPath, { recursive: true, force: true });
+		if (temporaryCatalogPath) rmSync(temporaryCatalogPath, { recursive: true, force: true });
 	});
 
-	test("builds the a topic tree from the library directory", () => {
+	test("builds the a topic tree from the catalog directory", () => {
 		const scheduleTracker = createScheduleTracker(Schedule.forNewCard());
-		const library = new FileSystemLibrary(exampleLibraryPath, scheduleTracker.tracker);
+		const catalog = new FileSystemCatalog(exampleCatalogPath, scheduleTracker.tracker);
 
-		const topicTree = library.getTopicTree();
+		const topicTree = catalog.getTopicTree();
 
-		expect(topicTree.name).toBe("example-library");
+		expect(topicTree.name).toBe("example-catalog");
 		expect(topicTree.deck.cards).toHaveLength(0);
 		const cleanCode = findSubtopic(topicTree, "clean-code");
 		const errorHandling = findSubtopic(topicTree, "error-handling");
@@ -40,9 +42,9 @@ describe("FileSystemLibrary", () => {
 	test("applies the schedules from the schedule tracker", () => {
 		const schedule = Schedule.parse(1, 2.2, 3, "2020-01-01T00:00:00.000Z");
 		const scheduleTracker = createScheduleTracker(schedule);
-		const library = new FileSystemLibrary(exampleLibraryPath, scheduleTracker.tracker);
+		const catalog = new FileSystemCatalog(exampleCatalogPath, scheduleTracker.tracker);
 
-		const topicTree = library.getTopicTree();
+		const topicTree = catalog.getTopicTree();
 		const cleanCode = findSubtopic(topicTree, "clean-code");
 		const targetCard = findCardByQuestion(cleanCode, getFirstCardQuestion(cleanCodeCards));
 		expect(targetCard.getSchedule()).toBe(schedule);
@@ -53,42 +55,42 @@ describe("FileSystemLibrary", () => {
 
 	test("throws an error when a card is missing the separator", () => {
 		const scheduleTracker = createScheduleTracker(Schedule.forNewCard());
-		const tempDir = mkdtempSync(join(tmpdir(), "reps-library-"));
-		temporaryLibraryPath = tempDir;
+		const tempDir = mkdtempSync(join(tmpdir(), "reps-catalog-"));
+		temporaryCatalogPath = tempDir;
 		const filePath = join(tempDir, "invalid.txt");
 		writeFileSync(filePath, "Question without separator");
-		const library = new FileSystemLibrary(tempDir, scheduleTracker.tracker);
+		const catalog = new FileSystemCatalog(tempDir, scheduleTracker.tracker);
 
-		expect(() => library.getTopicTree()).toThrow(
+		expect(() => catalog.getTopicTree()).toThrow(
 			"Card file invalid.txt must contain question and answer separated by '???'.",
 		);
 	});
 
-	test("throws an error when the library path is not a directory", () => {
+	test("throws an error when the catalog path is not a directory", () => {
 		const scheduleTracker = createScheduleTracker(Schedule.forNewCard());
-		const missingPath = join(tmpdir(), "reps-missing-library");
-		const library = new FileSystemLibrary(missingPath, scheduleTracker.tracker);
+		const missingPath = join(tmpdir(), "reps-missing-catalog");
+		const catalog = new FileSystemCatalog(missingPath, scheduleTracker.tracker);
 
-		expect(() => library.getTopicTree()).toThrow(
-			`Library path ${missingPath} must be an existing directory.`,
+		expect(() => catalog.getTopicTree()).toThrow(
+			`Catalog path ${missingPath} must be an existing directory.`,
 		);
 	});
 
-	test("throws an error when the library path is a file", () => {
+	test("throws an error when the catalog path is a file", () => {
 		const scheduleTracker = createScheduleTracker(Schedule.forNewCard());
-		const tempDir = mkdtempSync(join(tmpdir(), "reps-library-"));
-		temporaryLibraryPath = tempDir;
+		const tempDir = mkdtempSync(join(tmpdir(), "reps-catalog-"));
+		temporaryCatalogPath = tempDir;
 		const filePath = join(tempDir, "not-a-directory.txt");
 		writeFileSync(filePath, "Not a directory");
-		const library = new FileSystemLibrary(filePath, scheduleTracker.tracker);
+		const catalog = new FileSystemCatalog(filePath, scheduleTracker.tracker);
 
-		expect(() => library.getTopicTree()).toThrow(
-			`Library path ${filePath} must be an existing directory.`,
+		expect(() => catalog.getTopicTree()).toThrow(
+			`Catalog path ${filePath} must be an existing directory.`,
 		);
 	});
 });
 
-const exampleLibraryPath = join(process.cwd(), "tests", "example-library");
+const exampleCatalogPath = join(process.cwd(), "tests", "core", "example-catalog");
 
 const cleanCodeCards = [
 	{

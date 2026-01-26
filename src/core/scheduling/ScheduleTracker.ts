@@ -1,4 +1,4 @@
-import type { Card } from "./Card.js";
+import type { Card } from "../cataloging/Card.js";
 import type { Schedule } from "./Schedule.js";
 
 export interface ScheduleTracker {

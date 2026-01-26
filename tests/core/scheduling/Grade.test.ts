@@ -1,5 +1,5 @@
 import { describe, expect, test } from "vitest";
-import { Grade } from "../../src/core/Grade.js";
+import { Grade } from "../../../src/core/scheduling/Grade.js";
 
 describe("Grade", () => {
 	test("has a value between 0 and 5", () => {

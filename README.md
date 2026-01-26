@@ -25,7 +25,7 @@ $ reps
 
 4 out of 7 cards are ready to be reviewed.
 
-library (4/7 cards due)
+catalog (4/7 cards due)
 ├── clean-code (1/3 cards due)
 │   └── refactoring (1/1 done)
 └── error-handling (3/3 cards due)
@@ -65,7 +65,7 @@ Paris.
 
 ### Topic
 
-A subject category that groups related cards. Each topic is a directory in your library.
+A subject category that groups related cards. Each topic is a directory in your catalog.
 
 **Characteristics:**
 
@@ -74,14 +74,14 @@ A subject category that groups related cards. Each topic is a directory in your 
 - Cards inherit their parent topic's hierarchy
 - Names are descriptive and logically organized
 
-### Library
+### Catalog
 
 Your complete collection of study material—the root directory containing all topics and cards.
 
 **Structure Example:**
 
 ```
-library/
+catalog/
 ├── clean-code/
 │   ├── function-naming.txt
 │   ├── single-responsibility.txt
@@ -115,7 +115,7 @@ You. The student:
 
 **Structure:**
 
-- Root: The library directory containing all top-level topics
+- Root: The catalog directory containing all top-level topics
 - Topic: A subject area containing:
   - Multiple subtopics
   - One deck with all cards for that topic

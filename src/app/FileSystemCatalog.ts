@@ -1,23 +1,24 @@
 import { readdirSync, readFileSync, statSync } from "node:fs";
 import { basename, extname, join } from "node:path";
-import { Card } from "../core/Card.js";
-import { Deck } from "../core/Deck.js";
-import type { Library } from "../core/Library.js";
-import type { ScheduleTracker } from "../core/ScheduleTracker.js";
-import { Topic } from "../core/Topic.js";
 
-export class FileSystemLibrary implements Library {
+import { Card } from "../core/cataloging/Card.js";
+import type { Catalog } from "../core/cataloging/Catalog.js";
+import { Deck } from "../core/cataloging/Deck.js";
+import { Topic } from "../core/cataloging/Topic.js";
+import type { ScheduleTracker } from "../core/scheduling/ScheduleTracker.js";
+
+export class FileSystemCatalog implements Catalog {
 	private static CARD_FILE_EXTENSIONS = new Set([".md", ".txt"]);
 	private static CARD_SEPARATOR = "???"; // ju: Move to config.
 
 	public constructor(
-		private readonly libraryPath: string,
+		private readonly catalogPath: string,
 		private readonly scheduleTracker: ScheduleTracker,
 	) {}
 
 	public getTopicTree(): Topic {
-		this.ensureDirectoryExists(this.libraryPath);
-		return this.buildTopicTree(this.libraryPath);
+		this.ensureDirectoryExists(this.catalogPath);
+		return this.buildTopicTree(this.catalogPath);
 	}
 
 	private buildTopicTree(path: string): Topic {
@@ -38,7 +39,7 @@ export class FileSystemLibrary implements Library {
 	}
 
 	private isCardFile(filePath: string): boolean {
-		return FileSystemLibrary.CARD_FILE_EXTENSIONS.has(extname(filePath).toLowerCase());
+		return FileSystemCatalog.CARD_FILE_EXTENSIONS.has(extname(filePath).toLowerCase());
 	}
 
 	private parseToCard(filePath: string): Card {
@@ -50,14 +51,14 @@ export class FileSystemLibrary implements Library {
 
 	private parseCardContent(filePath: string): { question: string; answer: string } {
 		const content = readFileSync(filePath, "utf-8").trimEnd();
-		const separatorIndex = content.indexOf(FileSystemLibrary.CARD_SEPARATOR);
+		const separatorIndex = content.indexOf(FileSystemCatalog.CARD_SEPARATOR);
 		const separatorIsMissing = separatorIndex === -1;
 		if (separatorIsMissing) {
-			const message = `Card file ${basename(filePath)} must contain question and answer separated by '${FileSystemLibrary.CARD_SEPARATOR}'.`;
+			const message = `Card file ${basename(filePath)} must contain question and answer separated by '${FileSystemCatalog.CARD_SEPARATOR}'.`;
 			throw new Error(message);
 		}
 		const question = content.slice(0, separatorIndex).trim();
-		const answer = content.slice(separatorIndex + FileSystemLibrary.CARD_SEPARATOR.length).trim();
+		const answer = content.slice(separatorIndex + FileSystemCatalog.CARD_SEPARATOR.length).trim();
 		return { question, answer };
 	}
 
@@ -65,7 +66,7 @@ export class FileSystemLibrary implements Library {
 		try {
 			if (!statSync(path).isDirectory()) throw new Error();
 		} catch {
-			throw new Error(`Library path ${path} must be an existing directory.`);
+			throw new Error(`Catalog path ${path} must be an existing directory.`);
 		}
 	}
 }

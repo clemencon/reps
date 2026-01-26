@@ -3,11 +3,11 @@ import { dirname } from "node:path";
 
 export class Config {
 	private static readonly PATH = "~/.config/reps.json";
-	public static readonly DEFAULT_LIBRARY_PATH = "~/reps";
+	public static readonly DEFAULT_CATALOG_PATH = "~/reps";
 	public static readonly DEFAULT_DATABASE_PATH = "~/.local/share/reps/schedule.sqlite";
 
 	private constructor(
-		public readonly libraryPath: string,
+		public readonly catalogPath: string,
 		public readonly databasePath: string,
 	) {}
 
@@ -21,7 +21,7 @@ export class Config {
 			const fileContent = readFileSync(path, "utf-8");
 			const parsed = JSON.parse(fileContent);
 			return new Config(
-				parsed.libraryPath ?? Config.DEFAULT_LIBRARY_PATH,
+				parsed.catalogPath ?? Config.DEFAULT_CATALOG_PATH,
 				parsed.databasePath ?? Config.DEFAULT_DATABASE_PATH,
 			);
 		} catch {
@@ -35,7 +35,7 @@ export class Config {
 
 	private static writeDefaultFile(): void {
 		const defaultConfig = {
-			libraryPath: Config.DEFAULT_LIBRARY_PATH,
+			catalogPath: Config.DEFAULT_CATALOG_PATH,
 			databasePath: Config.DEFAULT_DATABASE_PATH,
 		};
 		mkdirSync(dirname(Config.PATH), { recursive: true });

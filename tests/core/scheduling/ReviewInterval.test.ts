@@ -1,5 +1,5 @@
 import { describe, expect, test } from "vitest";
-import { ReviewInterval } from "../../src/core/ReviewInterval.js";
+import { ReviewInterval } from "../../../src/core/scheduling/ReviewInterval.js";
 
 describe("ReviewInterval", () => {
 	test("defaults to zero days", () => {

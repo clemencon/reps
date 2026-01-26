@@ -1,6 +1,6 @@
 import { describe, expect, test } from "vitest";
-import { Card } from "../../src/core/Card.js";
-import { Deck } from "../../src/core/Deck.js";
+import { Card } from "../../../src/core/cataloging/Card.js";
+import { Deck } from "../../../src/core/cataloging/Deck.js";
 
 describe("Deck", () => {
 	test("contains cards", () => {
