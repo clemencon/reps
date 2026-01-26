@@ -1,12 +1,11 @@
 import { describe, expect, test } from "vitest";
-import { Card } from "../../../src/core/cataloging/Card.js";
-import { Deck } from "../../../src/core/cataloging/Deck.js";
 import { Topic } from "../../../src/core/cataloging/Topic.js";
+import { DeckBuilder } from "./DeckBuilder.js";
 
 describe("Topic", () => {
 	test("organizes cards under a named subject", () => {
-		const card = new Card("What is 2+2?", "4");
-		const deck = new Deck(card);
+		const deck = new DeckBuilder().withCards(3).build();
+
 		const topic = new Topic("Arithmetic", deck);
 
 		expect(topic.name).toBe("Arithmetic");
@@ -14,18 +13,22 @@ describe("Topic", () => {
 	});
 
 	test("can contain subtopics", () => {
-		const additionCard = new Card("1+1?", "2");
-		const addition = new Topic("Addition", new Deck(additionCard));
-		const subtractionCard = new Card("3-1?", "2");
-		const subtraction = new Topic("Subtraction", new Deck(subtractionCard));
-		const math = new Topic("Math", new Deck(), [addition, subtraction]);
+		const additionDeck = new DeckBuilder().withCards(2).build();
+		const addition = new Topic("Addition", additionDeck);
+		const subtractionDeck = new DeckBuilder().withCards(2).build();
+		const subtraction = new Topic("Subtraction", subtractionDeck);
+
+		const subtopics = [addition, subtraction];
+		const mathDeck = new DeckBuilder().empty().build();
+		const math = new Topic("Math", mathDeck, subtopics);
 
 		expect(math.containsSubtopics).toBe(true);
-		expect(math.subtopics).toEqual([addition, subtraction]);
+		expect(math.subtopics).toEqual(subtopics);
 	});
 
 	test("defaults to no subtopics when none are provided", () => {
-		const topic = new Topic("Standalone", new Deck());
+		const standaloneDeck = new DeckBuilder().empty().build();
+		const topic = new Topic("Standalone", standaloneDeck);
 		expect(topic.containsSubtopics).toBe(false);
 	});
 });

@@ -10,4 +10,12 @@ export class Topic {
 	public get containsSubtopics(): boolean {
 		return this.subtopics.length > 0;
 	}
+
+	// public amountOfCards(): number {}
+
+	// public amountOfCardsToReview(): number {}
+
+	// public assembleTopicDeck(): Deck {}
+
+	// public assembleReviewDeck(): Deck {}
 }
