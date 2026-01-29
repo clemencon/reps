@@ -1,4 +1,5 @@
 import { describe, expect, test } from "vitest";
+import type { Card } from "../../../src/core/cataloging/Card.js";
 import { Deck } from "../../../src/core/cataloging/Deck.js";
 import { CardBuilder } from "./CardBuilder.js";
 
@@ -30,5 +31,15 @@ describe("Deck", () => {
 		const mergedDeck = deck1.mergeWith(deck2);
 
 		expect([...mergedDeck]).toEqual([card1, card2]);
+	});
+
+	test("cards that are due for review can be retrieved", () => {
+		const reviewedCard: Card = new CardBuilder().reviewed().build();
+		const dueCard: Card = new CardBuilder().dueForReview().build();
+
+		const deck = new Deck(reviewedCard, dueCard);
+		const deckToReview: Deck = deck.cardsDueForReview();
+
+		expect([...deckToReview]).toEqual([dueCard]);
 	});
 });

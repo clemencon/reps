@@ -7,12 +7,16 @@ export class Deck {
 		this.cards = cards;
 	}
 
+	public [Symbol.iterator](): Iterator<Card> {
+		return this.cards[Symbol.iterator]();
+	}
+
 	public get amountOfCards(): number {
 		return this.cards.length;
 	}
 
-	public [Symbol.iterator](): Iterator<Card> {
-		return this.cards[Symbol.iterator]();
+	public cardsDueForReview(): Deck {
+		return new Deck(...this.cards.filter((card) => card.isDueForReview()));
 	}
 
 	public mergeWith(other: Deck): Deck {
