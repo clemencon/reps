@@ -11,7 +11,9 @@ export class Topic {
 		return this.subtopics.length > 0;
 	}
 
-	// public amountOfCards(): number {}
+	public get totalAmountOfCards(): number {
+		return this.deck.amountOfCards;
+	}
 
 	// public amountOfCardsToReview(): number {}
 

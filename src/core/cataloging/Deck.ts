@@ -7,6 +7,10 @@ export class Deck {
 		this.cards = cards;
 	}
 
+	public get amountOfCards(): number {
+		return this.cards.length;
+	}
+
 	public [Symbol.iterator](): Iterator<Card> {
 		return this.cards[Symbol.iterator]();
 	}

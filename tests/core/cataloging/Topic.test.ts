@@ -31,4 +31,10 @@ describe("Topic", () => {
 		const topic = new Topic("Standalone", standaloneDeck);
 		expect(topic.containsSubtopics).toBe(false);
 	});
+
+	test("has an amount of total cards", () => {
+		const deck = new DeckBuilder().withCards(5).build();
+		const topic = new Topic("clean-code", deck);
+		expect(topic.totalAmountOfCards).toBe(5);
+	});
 });
