@@ -1,13 +1,5 @@
 import type { Topic } from "../core/cataloging/Topic.js";
 
-type NodeType = "ROOT" | "BRANCH" | "LEAF";
-
-const CONNECTORS: Record<NodeType, { current: string; next: string }> = {
-	ROOT: { current: "", next: "" },
-	BRANCH: { current: "├── ", next: "│   " },
-	LEAF: { current: "└── ", next: "    " },
-};
-
 export function renderTopicTree(topic: Topic): string {
 	return renderNode(topic, "ROOT", "");
 }
@@ -27,3 +19,11 @@ function renderNode(topic: Topic, nodeType: NodeType, connectorPrefix: string): 
 
 	return lines.join("\n");
 }
+
+type NodeType = "ROOT" | "BRANCH" | "LEAF";
+
+const CONNECTORS: Record<NodeType, { current: string; next: string }> = {
+	ROOT: { current: "", next: "" },
+	BRANCH: { current: "├── ", next: "│   " },
+	LEAF: { current: "└── ", next: "    " },
+};
