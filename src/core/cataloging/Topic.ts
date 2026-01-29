@@ -12,7 +12,7 @@ export class Topic {
 	}
 
 	public get totalAmountOfCards(): number {
-		return this.deck.amountOfCards;
+		return this.assembleTopicDeck().amountOfCards;
 	}
 
 	public assembleTopicDeck(): Deck {

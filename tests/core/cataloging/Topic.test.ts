@@ -47,5 +47,6 @@ describe("Topic", () => {
 		const topicDeck = rootTopic.assembleTopicDeck();
 
 		expect(topicDeck.amountOfCards).toBe(7);
+		expect(rootTopic.totalAmountOfCards).toBe(7);
 	});
 });
