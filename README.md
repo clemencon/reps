@@ -43,6 +43,8 @@ Pick a topic to review: clean-code
 
 ## Core Concepts
 
+![dependency-graph.svg](dependency-graph.svg)
+
 ### Card
 
 A flashcard with a question and answer, stored as a plain text file separated by `???`.
@@ -153,6 +155,9 @@ pnpm fix
 
 # Run the tests (including the snapshot tests).
 pnpm test
+
+# Generate dependency graph (requires GraphViz).
+pnpm graph
 ```
 
 ## SM-2 Algorithm
