@@ -20,4 +20,15 @@ describe("Deck", () => {
 		const deck = new Deck();
 		expect([...deck]).toEqual([]);
 	});
+
+	test("can be merged with another deck", () => {
+		const card1 = new CardBuilder().build();
+		const card2 = new CardBuilder().build();
+		const deck1 = new Deck(card1);
+		const deck2 = new Deck(card2);
+
+		const mergedDeck = deck1.mergeWith(deck2);
+
+		expect([...mergedDeck]).toEqual([card1, card2]);
+	});
 });

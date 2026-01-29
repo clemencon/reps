@@ -37,4 +37,15 @@ describe("Topic", () => {
 		const topic = new Topic("clean-code", deck);
 		expect(topic.totalAmountOfCards).toBe(5);
 	});
+
+	test("contains all the cards for the topic, including its subtopics", () => {
+		const childTopicDeck = new DeckBuilder().withCards(2).build();
+		const childTopic = new Topic("agile", childTopicDeck);
+		const rootTopicDeck = new DeckBuilder().withCards(5).build();
+		const rootTopic = new Topic("clean-code", rootTopicDeck, [childTopic]);
+
+		const topicDeck = rootTopic.assembleTopicDeck();
+
+		expect(topicDeck.amountOfCards).toBe(7);
+	});
 });

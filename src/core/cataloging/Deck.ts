@@ -14,4 +14,8 @@ export class Deck {
 	public [Symbol.iterator](): Iterator<Card> {
 		return this.cards[Symbol.iterator]();
 	}
+
+	public mergeWith(other: Deck): Deck {
+		return new Deck(...this.cards, ...other.cards);
+	}
 }

@@ -15,9 +15,15 @@ export class Topic {
 		return this.deck.amountOfCards;
 	}
 
-	// public amountOfCardsToReview(): number {}
+	public assembleTopicDeck(): Deck {
+		const subtopicDecks = this.subtopics.map((subtopic) => subtopic.assembleTopicDeck());
+		return subtopicDecks.reduce(
+			(topicDeck, subtopicDeck) => topicDeck.mergeWith(subtopicDeck),
+			this.deck,
+		);
+	}
 
-	// public assembleTopicDeck(): Deck {}
+	// public amountOfCardsToReview(): number {}
 
 	// public assembleReviewDeck(): Deck {}
 }
