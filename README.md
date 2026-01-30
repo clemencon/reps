@@ -16,6 +16,8 @@ This is a Petri dish, not production code.
 
 The code may look odd.
 
+(Some thoughts/concerns are already getting shape during development...)
+
 ## Study Flow
 
 When you run `reps`, you see a topic tree showing cards due for review (when implemented):
