@@ -28,6 +28,19 @@ describe("Topic", () => {
 		expect(math.subtopics).toEqual(subtopics);
 	});
 
+	test("has an amount of subtopics", () => {
+		const additionDeck = new DeckBuilder().withCards(2).build();
+		const addition = new Topic("Addition", additionDeck);
+		const subtractionDeck = new DeckBuilder().withCards(2).build();
+		const subtraction = new Topic("Subtraction", subtractionDeck);
+
+		const subtopics = [addition, subtraction];
+		const mathDeck = new DeckBuilder().empty().build();
+		const math = new Topic("Math", mathDeck, subtopics);
+
+		expect(math.amountOfSubtopics).toBe(2);
+	});
+
 	test("defaults to no subtopics when none are provided", () => {
 		const standaloneDeck = new DeckBuilder().empty().build();
 		const topic = new Topic("Standalone", standaloneDeck);

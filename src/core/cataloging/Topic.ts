@@ -13,6 +13,10 @@ export class Topic {
 		return this.subtopics.length > 0;
 	}
 
+	public get amountOfSubtopics(): number {
+		return this.subtopics.length;
+	}
+
 	public get totalAmountOfCards(): number {
 		return this.assembleTopicDeck().amountOfCards;
 	}

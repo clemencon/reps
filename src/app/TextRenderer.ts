@@ -9,10 +9,9 @@ function renderTopicTreeNode(topic: Topic, nodeType: TopicNodeType, indent: stri
 	const topicLine = `${indent}${connector.symbol}${topic.name} ${topicStats(topic)}`;
 
 	const nextIndent = indent + connector.childIndent;
-	const subtopics = topic.subtopics;
-	const lastIndex = subtopics.length - 1;
+	const lastIndex = topic.amountOfSubtopics - 1;
 
-	const childLines = subtopics.map((subtopic, i) =>
+	const childLines = topic.subtopics.map((subtopic, i) =>
 		renderTopicTreeNode(subtopic, i === lastIndex ? "LEAF" : "BRANCH", nextIndent),
 	);
 
