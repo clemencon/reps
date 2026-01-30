@@ -1,29 +1,38 @@
 import type { Topic } from "../core/cataloging/Topic.js";
 
-type NodeType = "ROOT" | "BRANCH" | "LEAF";
-
-const CONNECTORS: Record<NodeType, { current: string; next: string }> = {
-	ROOT: { current: "", next: "" },
-	BRANCH: { current: "├── ", next: "│   " },
-	LEAF: { current: "└── ", next: "    " },
-};
-
 export function renderTopicTree(topic: Topic): string {
-	return renderNode(topic, "ROOT", "");
+	return renderTopicTreeNode(topic, "ROOT", "");
 }
 
-function renderNode(topic: Topic, nodeType: NodeType, connectorPrefix: string): string {
+function renderTopicTreeNode(topic: Topic, nodeType: TopicNodeType, indent: string): string {
 	const connector = CONNECTORS[nodeType];
-	const lines: string[] = [connectorPrefix + connector.current + topic.name];
+	const topicLine = `${indent}${connector.symbol}${topic.name} ${topicStats(topic)}`;
 
-	const nextPrefix = connectorPrefix + connector.next;
+	const nextIndent = indent + connector.childIndent;
 	const subtopics = topic.subtopics;
 	const lastIndex = subtopics.length - 1;
 
-	for (const [i, subtopic] of subtopics.entries()) {
-		const childNodeType: NodeType = i === lastIndex ? "LEAF" : "BRANCH";
-		lines.push(renderNode(subtopic, childNodeType, nextPrefix));
-	}
+	const childLines = subtopics.map((subtopic, i) =>
+		renderTopicTreeNode(subtopic, i === lastIndex ? "LEAF" : "BRANCH", nextIndent),
+	);
 
-	return lines.join("\n");
+	return [topicLine, ...childLines].join("\n");
 }
+
+function topicStats(topic: Topic): string {
+	const total = topic.totalAmountOfCards;
+	const due = topic.amountOfCardsDueForReview();
+	const cardWord = total === 1 ? "card" : "cards";
+	const dueText = due === 0 ? "done" : `${due} due`;
+	return `(${total} ${cardWord}: ${dueText})`;
+}
+
+type TopicNodeType = "ROOT" | "BRANCH" | "LEAF";
+
+type Connector = { readonly symbol: string; readonly childIndent: string };
+
+const CONNECTORS = {
+	ROOT: { symbol: "", childIndent: "" },
+	BRANCH: { symbol: "├── ", childIndent: "│   " },
+	LEAF: { symbol: "└── ", childIndent: "    " },
+} as const satisfies Record<TopicNodeType, Connector>;

@@ -1,4 +1,5 @@
 import { faker } from "@faker-js/faker/locale/en";
+import type { Deck } from "../../../src/core/cataloging/Deck.js";
 import { Topic } from "../../../src/core/cataloging/Topic.js";
 import { DeckBuilder } from "./DeckBuilder.js";
 
@@ -9,6 +10,11 @@ export class TopicBuilder {
 
 	public withName(name: string): TopicBuilder {
 		this.name = name;
+		return this;
+	}
+
+	public withDeck(deck: Deck): TopicBuilder {
+		this.deck = deck;
 		return this;
 	}
 

@@ -10,6 +10,20 @@ export class DeckBuilder {
 		return this;
 	}
 
+	public withCardsDue(amount: number): DeckBuilder {
+		this.cards.push(
+			...Array.from({ length: amount }, () => new CardBuilder().dueForReview().build()),
+		);
+		return this;
+	}
+
+	public withCardsNotDue(amount: number): DeckBuilder {
+		this.cards.push(
+			...Array.from({ length: amount }, () => new CardBuilder().notDueForReview().build()),
+		);
+		return this;
+	}
+
 	public empty(): DeckBuilder {
 		this.cards = [];
 		return this;

@@ -1,5 +1,7 @@
 import type { Deck } from "./Deck.js";
 
+// Assembles decks on every call.
+// This is a simple implementation for now and can be optimized while testing performance if necessary.
 export class Topic {
 	public constructor(
 		public readonly name: string,
@@ -11,11 +13,27 @@ export class Topic {
 		return this.subtopics.length > 0;
 	}
 
-	// public amountOfCards(): number {}
+	public get totalAmountOfCards(): number {
+		return this.assembleTopicDeck().amountOfCards;
+	}
 
-	// public amountOfCardsToReview(): number {}
+	public assembleTopicDeck(): Deck {
+		const subtopicDecks = this.subtopics.map((subtopic) => subtopic.assembleTopicDeck());
+		return subtopicDecks.reduce(
+			(topicDeck, subtopicDeck) => topicDeck.mergeWith(subtopicDeck),
+			this.deck,
+		);
+	}
 
-	// public assembleTopicDeck(): Deck {}
+	public amountOfCardsDueForReview(): number {
+		return this.assembleReviewDeck().amountOfCards;
+	}
 
-	// public assembleReviewDeck(): Deck {}
+	public amountOfCardsNotDueForReview(): number {
+		return this.assembleTopicDeck().cardsDueForReview().amountOfCards;
+	}
+
+	public assembleReviewDeck(): Deck {
+		return this.assembleTopicDeck().cardsDueForReview();
+	}
 }

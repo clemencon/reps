@@ -1,5 +1,7 @@
 import { describe, expect, test } from "vitest";
+import { Deck } from "../../../src/core/cataloging/Deck.js";
 import { Topic } from "../../../src/core/cataloging/Topic.js";
+import { CardBuilder } from "./CardBuilder.js";
 import { DeckBuilder } from "./DeckBuilder.js";
 
 describe("Topic", () => {
@@ -30,5 +32,41 @@ describe("Topic", () => {
 		const standaloneDeck = new DeckBuilder().empty().build();
 		const topic = new Topic("Standalone", standaloneDeck);
 		expect(topic.containsSubtopics).toBe(false);
+	});
+
+	test("has an amount of total cards", () => {
+		const deck = new DeckBuilder().withCards(5).build();
+		const topic = new Topic("clean-code", deck);
+		expect(topic.totalAmountOfCards).toBe(5);
+	});
+
+	test("contains all the cards for the topic, including its subtopics", () => {
+		const childTopicDeck = new DeckBuilder().withCards(2).build();
+		const childTopic = new Topic("agile", childTopicDeck);
+		const rootTopicDeck = new DeckBuilder().withCards(5).build();
+		const rootTopic = new Topic("clean-code", rootTopicDeck, [childTopic]);
+
+		const topicDeck = rootTopic.assembleTopicDeck();
+
+		expect(topicDeck.amountOfCards).toBe(7);
+		expect(rootTopic.totalAmountOfCards).toBe(7);
+	});
+
+	test("knows how many cards are due for review", () => {
+		const dueCard = new CardBuilder().dueForReview().build();
+		const notDueCard = new CardBuilder().notDueForReview().build();
+		const deck = new Deck(dueCard, notDueCard);
+		const topic = new Topic("Review Test", deck);
+
+		expect(topic.amountOfCardsDueForReview()).toBe(1);
+	});
+
+	test("knows how many cards are not due for review", () => {
+		const dueCard = new CardBuilder().dueForReview().build();
+		const notDueCard = new CardBuilder().notDueForReview().build();
+		const deck = new Deck(dueCard, notDueCard);
+		const topic = new Topic("Review Test", deck);
+
+		expect(topic.amountOfCardsNotDueForReview()).toBe(1);
 	});
 });
