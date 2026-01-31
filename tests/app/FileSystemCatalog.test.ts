@@ -4,7 +4,7 @@ import { join } from "node:path";
 
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
-import { FileSystemCatalog } from "../../src/app/FileSystemCatalog.js";
+import { FileSystemCatalog } from "../../src/app/persistence/FileSystemCatalog.js";
 import { Card } from "../../src/core/cataloging/Card.js";
 import type { Topic } from "../../src/core/cataloging/Topic.js";
 import { Schedule } from "../../src/core/scheduling/Schedule.js";

@@ -1,9 +1,9 @@
 import { mkdirSync } from "node:fs";
 import { dirname } from "node:path";
 import Database from "better-sqlite3";
-import type { Card } from "../core/cataloging/Card.js";
-import { Schedule } from "../core/scheduling/Schedule.js";
-import type { ScheduleTracker } from "../core/scheduling/ScheduleTracker.js";
+import type { Card } from "../../core/cataloging/Card.js";
+import { Schedule } from "../../core/scheduling/Schedule.js";
+import type { ScheduleTracker } from "../../core/scheduling/ScheduleTracker.js";
 
 export class SQLiteScheduleTracker implements ScheduleTracker {
 	private readonly db: Database.Database;

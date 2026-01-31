@@ -1,11 +1,11 @@
 import { readdirSync, readFileSync, statSync } from "node:fs";
 import { basename, extname, join } from "node:path";
 
-import { Card } from "../core/cataloging/Card.js";
-import type { Catalog } from "../core/cataloging/Catalog.js";
-import { Deck } from "../core/cataloging/Deck.js";
-import { Topic } from "../core/cataloging/Topic.js";
-import type { ScheduleTracker } from "../core/scheduling/ScheduleTracker.js";
+import { Card } from "../../core/cataloging/Card.js";
+import type { Catalog } from "../../core/cataloging/Catalog.js";
+import { Deck } from "../../core/cataloging/Deck.js";
+import { Topic } from "../../core/cataloging/Topic.js";
+import type { ScheduleTracker } from "../../core/scheduling/ScheduleTracker.js";
 
 export class FileSystemCatalog implements Catalog {
 	private static CARD_FILE_EXTENSIONS = new Set([".md", ".txt"]);

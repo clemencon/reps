@@ -2,7 +2,7 @@ import { existsSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterEach, beforeEach, describe, expect, test } from "vitest";
-import { SQLiteScheduleTracker } from "../../src/app/SQLiteScheduleTracker.js";
+import { SQLiteScheduleTracker } from "../../src/app/persistence/SQLiteScheduleTracker.js";
 import { Card } from "../../src/core/cataloging/Card.js";
 import { Grade } from "../../src/core/scheduling/Grade.js";
 

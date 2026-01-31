@@ -1,6 +1,6 @@
 import dedent from "dedent";
 import { describe, expect, test } from "vitest";
-import { renderTopicTree } from "../../src/app/TextRenderer.js";
+import { renderTopicTree } from "../../src/app/cli/TextRenderer.js";
 import { DeckBuilder } from "../core/cataloging/DeckBuilder.js";
 import { TopicBuilder } from "../core/cataloging/TopicBuilder.js";
 

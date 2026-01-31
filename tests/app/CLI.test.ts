@@ -11,7 +11,7 @@ describe("CLI prompt", () => {
 
 	test("selects review by default", async () => {
 		const { select } = await import("@inquirer/prompts");
-		const { reviewPromptConfig } = await import("../../src/app/CLI.js");
+		const { reviewPromptConfig } = await import("../../src/app/cli/CLI.js");
 		const { answer, events, getScreen } = await render(select, reviewPromptConfig);
 
 		expect(getScreen()).toContain("Ready to review?");
@@ -24,7 +24,7 @@ describe("CLI prompt", () => {
 
 	test("selects exit when navigating down", async () => {
 		const { select } = await import("@inquirer/prompts");
-		const { reviewPromptConfig } = await import("../../src/app/CLI.js");
+		const { reviewPromptConfig } = await import("../../src/app/cli/CLI.js");
 		const { answer, events, getScreen } = await render(select, reviewPromptConfig);
 
 		expect(getScreen()).toContain("Specific topic");
@@ -51,7 +51,7 @@ describe("CLI run", () => {
 		const logSpy = vi.spyOn(console, "log").mockImplementation(() => undefined);
 
 		vi.doMock("@inquirer/prompts", () => ({ select }));
-		const { CLI } = await import("../../src/app/CLI.js");
+		const { CLI } = await import("../../src/app/cli/CLI.js");
 
 		await new CLI().run();
 
@@ -64,7 +64,7 @@ describe("CLI run", () => {
 		const logSpy = vi.spyOn(console, "log").mockImplementation(() => undefined);
 
 		vi.doMock("@inquirer/prompts", () => ({ select }));
-		const { CLI } = await import("../../src/app/CLI.js");
+		const { CLI } = await import("../../src/app/cli/CLI.js");
 
 		await new CLI().run();
 
@@ -76,7 +76,7 @@ describe("CLI run", () => {
 		const logSpy = vi.spyOn(console, "log").mockImplementation(() => undefined);
 
 		vi.doMock("@inquirer/prompts", () => ({ select }));
-		const { CLI } = await import("../../src/app/CLI.js");
+		const { CLI } = await import("../../src/app/cli/CLI.js");
 
 		await new CLI().run();
 

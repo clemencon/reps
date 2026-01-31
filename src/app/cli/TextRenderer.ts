@@ -1,4 +1,4 @@
-import type { Topic } from "../core/cataloging/Topic.js";
+import type { Topic } from "../../core/cataloging/Topic.js";
 
 export function renderTopicTree(topic: Topic): string {
 	return renderTopicTreeNode(topic, "ROOT", "");
