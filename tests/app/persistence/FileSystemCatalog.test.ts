@@ -4,11 +4,11 @@ import { join } from "node:path";
 
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
-import { FileSystemCatalog } from "../../src/app/persistence/FileSystemCatalog.js";
-import { Card } from "../../src/core/cataloging/Card.js";
-import type { Topic } from "../../src/core/cataloging/Topic.js";
-import { Schedule } from "../../src/core/scheduling/Schedule.js";
-import type { ScheduleTracker } from "../../src/core/scheduling/ScheduleTracker.js";
+import { FileSystemCatalog } from "../../../src/app/persistence/FileSystemCatalog.js";
+import { Card } from "../../../src/core/cataloging/Card.js";
+import type { Topic } from "../../../src/core/cataloging/Topic.js";
+import { Schedule } from "../../../src/core/scheduling/Schedule.js";
+import type { ScheduleTracker } from "../../../src/core/scheduling/ScheduleTracker.js";
 
 describe("FileSystemCatalog", () => {
 	let temporaryCatalogPath: string | undefined;
@@ -90,7 +90,7 @@ describe("FileSystemCatalog", () => {
 	});
 });
 
-const exampleCatalogPath = join(process.cwd(), "tests", "core", "example-catalog");
+const exampleCatalogPath = join(process.cwd(), "tests", "example-catalog");
 
 const cleanCodeCards = [
 	{

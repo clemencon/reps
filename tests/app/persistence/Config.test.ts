@@ -1,6 +1,6 @@
 import { vol } from "memfs";
 import { beforeEach, describe, expect, test, vi } from "vitest";
-import { Config } from "../../src/app/persistence/Config.js";
+import { Config } from "../../../src/app/persistence/Config.js";
 
 vi.mock("node:fs", async () => {
 	const memfs = await import("memfs");
