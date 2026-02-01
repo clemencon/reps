@@ -1,4 +1,5 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { homedir } from "node:os";
 import { dirname } from "node:path";
 
 export class Config {
@@ -12,33 +13,37 @@ export class Config {
 	) {}
 
 	public static load(): Config {
-		if (!Config.fileExists()) Config.writeDefaultFile();
-		return Config.parseFile(Config.PATH);
+		const configPath = Config.expanded(Config.PATH);
+		if (!Config.fileExists(configPath)) Config.writeDefaultFile(configPath);
+		return Config.parseFile(configPath);
 	}
 
 	private static parseFile(path: string): Config {
 		try {
 			const fileContent = readFileSync(path, "utf-8");
 			const parsed = JSON.parse(fileContent);
-			return new Config(
-				parsed.catalogPath ?? Config.DEFAULT_CATALOG_PATH,
-				parsed.databasePath ?? Config.DEFAULT_DATABASE_PATH,
-			);
+			const catalogPath = Config.expanded(parsed.catalogPath ?? Config.DEFAULT_CATALOG_PATH);
+			const databasePath = Config.expanded(parsed.databasePath ?? Config.DEFAULT_DATABASE_PATH);
+			return new Config(catalogPath, databasePath);
 		} catch {
 			throw new Error(`Failed to read the configuration file ${path}: invalid JSON syntax.`);
 		}
 	}
 
-	private static fileExists(): boolean {
-		return existsSync(Config.PATH);
+	private static fileExists(path: string): boolean {
+		return existsSync(path);
 	}
 
-	private static writeDefaultFile(): void {
+	private static writeDefaultFile(path: string): void {
 		const defaultConfig = {
 			catalogPath: Config.DEFAULT_CATALOG_PATH,
 			databasePath: Config.DEFAULT_DATABASE_PATH,
 		};
-		mkdirSync(dirname(Config.PATH), { recursive: true });
-		writeFileSync(Config.PATH, JSON.stringify(defaultConfig, null, 4));
+		mkdirSync(dirname(path), { recursive: true });
+		writeFileSync(path, JSON.stringify(defaultConfig, null, 4));
+	}
+
+	private static expanded(path: string): string {
+		return path.startsWith("~/") ? path.replace("~", homedir()) : path;
 	}
 }
