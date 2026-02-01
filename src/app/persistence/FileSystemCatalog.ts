@@ -64,6 +64,7 @@ export class FileSystemCatalog implements Catalog {
 
 	private ensureDirectoryExists(path: string): void {
 		try {
+			// ju: Implement proper error handling app wide.
 			if (!statSync(path).isDirectory()) throw new Error();
 		} catch {
 			throw new Error(`Catalog path ${path} must be an existing directory.`);
