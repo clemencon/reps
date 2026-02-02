@@ -1,4 +1,4 @@
-import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { existsSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 
@@ -10,6 +10,7 @@ import type { Topic } from "../../../src/core/cataloging/Topic.js";
 import { Schedule } from "../../../src/core/scheduling/Schedule.js";
 import type { ScheduleTracker } from "../../../src/core/scheduling/ScheduleTracker.js";
 
+// ju: Clean up the spacing.
 describe("FileSystemCatalog", () => {
 	let temporaryCatalogPath: string | undefined;
 
@@ -66,14 +67,14 @@ describe("FileSystemCatalog", () => {
 		);
 	});
 
-	test("throws an error when the catalog path is not a directory", () => {
+	test("creates the catalog directory when missing", () => {
 		const scheduleTracker = createScheduleTracker(Schedule.forNewCard());
 		const missingPath = join(tmpdir(), "reps-missing-catalog");
-		const catalog = new FileSystemCatalog(missingPath, scheduleTracker.tracker);
+		temporaryCatalogPath = missingPath;
 
-		expect(() => catalog.getTopicTree()).toThrow(
-			`Catalog path ${missingPath} must be an existing directory.`,
-		);
+		new FileSystemCatalog(missingPath, scheduleTracker.tracker);
+
+		expect(existsSync(missingPath)).toBe(true);
 	});
 
 	test("throws an error when the catalog path is a file", () => {
@@ -82,9 +83,8 @@ describe("FileSystemCatalog", () => {
 		temporaryCatalogPath = tempDir;
 		const filePath = join(tempDir, "not-a-directory.txt");
 		writeFileSync(filePath, "Not a directory");
-		const catalog = new FileSystemCatalog(filePath, scheduleTracker.tracker);
 
-		expect(() => catalog.getTopicTree()).toThrow(
+		expect(() => new FileSystemCatalog(filePath, scheduleTracker.tracker)).toThrow(
 			`Catalog path ${filePath} must be an existing directory.`,
 		);
 	});

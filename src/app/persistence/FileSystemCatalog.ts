@@ -1,4 +1,4 @@
-import { readdirSync, readFileSync, statSync } from "node:fs";
+import { existsSync, mkdirSync, readdirSync, readFileSync, statSync } from "node:fs";
 import { basename, extname, join } from "node:path";
 
 import { Card } from "../../core/cataloging/Card.js";
@@ -14,10 +14,11 @@ export class FileSystemCatalog implements Catalog {
 	public constructor(
 		private readonly catalogPath: string,
 		private readonly scheduleTracker: ScheduleTracker,
-	) {}
+	) {
+		this.ensureDirectoryExists(this.catalogPath);
+	}
 
 	public getTopicTree(): Topic {
-		this.ensureDirectoryExists(this.catalogPath);
 		return this.buildTopicTree(this.catalogPath);
 	}
 
@@ -63,10 +64,10 @@ export class FileSystemCatalog implements Catalog {
 	}
 
 	private ensureDirectoryExists(path: string): void {
-		try {
-			// ju: Implement proper error handling app wide.
-			if (!statSync(path).isDirectory()) throw new Error();
-		} catch {
+		if (!existsSync(path)) {
+			mkdirSync(path, { recursive: true });
+		}
+		if (!statSync(path).isDirectory()) {
 			throw new Error(`Catalog path ${path} must be an existing directory.`);
 		}
 	}
