@@ -18,6 +18,10 @@ The code may look odd.
 
 (Some thoughts/concerns are already getting shape during development...)
 
+- Code coverage can create a false sense of security.
+- The code coverage is a good negative indicator, but a bad positive one.
+- I want to think more about the test implementations. It looks mostly classical now, I will try more London style.
+
 ## Study Flow
 
 When you run `reps`, you see a topic tree showing cards due for review (when implemented):
@@ -27,10 +31,10 @@ $ reps
 
 4 out of 7 cards are ready to be reviewed.
 
-catalog (4/7 cards due)
-├── clean-code (1/3 cards due)
-│   └── refactoring (1/1 done)
-└── error-handling (3/3 cards due)
+ catalog (8 cards: 6 due)
+ ├── clean-code (4 cards: 3 due)
+ │   └── refactoring (1 card: done)
+ └── error-handling (3 cards: 3 due)
 
 Pick a topic to review: clean-code
 ```
