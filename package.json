@@ -11,10 +11,11 @@
 	},
 	"scripts": {
 		"check": "biome check && tsc --project tsconfig.test.json && vitest run --coverage",
-		"build": "biome check && tsc --project tsconfig.test.json && vitest run && vitest run --coverage && rm -rf dist && tsc",
+		"build": "biome check && tsc --project tsconfig.test.json && vitest run && vitest run --coverage && rm -rf dist && tsc && vitest run --config vitest.e2e.config.ts",
 		"fix": "biome check --write .",
 		"test": "vitest",
 		"coverage": "vitest run --coverage",
+		"e2e": "vitest run --config vitest.e2e.config.ts",
 		"graph": "depcruise src --include-only \"^src\" --output-type dot --no-config | dot -T svg > dependency-graph.svg"
 	},
 	"devDependencies": {
