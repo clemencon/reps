@@ -21,14 +21,6 @@ export class Topic {
 		return this.assembleTopicDeck().amountOfCards;
 	}
 
-	public assembleTopicDeck(): Deck {
-		const subtopicDecks = this.subtopics.map((subtopic) => subtopic.assembleTopicDeck());
-		return subtopicDecks.reduce(
-			(topicDeck, subtopicDeck) => topicDeck.mergeWith(subtopicDeck),
-			this.deck,
-		);
-	}
-
 	public amountOfCardsDueForReview(): number {
 		return this.assembleReviewDeck().amountOfCards;
 	}
@@ -39,5 +31,22 @@ export class Topic {
 
 	public assembleReviewDeck(): Deck {
 		return this.assembleTopicDeck().cardsDueForReview();
+	}
+
+	public assembleTopicDeck(): Deck {
+		const subtopicDecks = this.subtopics.map((subtopic) => subtopic.assembleTopicDeck());
+		return subtopicDecks.reduce(
+			(topicDeck, subtopicDeck) => topicDeck.mergeWith(subtopicDeck),
+			this.deck,
+		);
+	}
+
+	public listAllTopics(): Topic[] {
+		return this.flattenTopicTree(this);
+	}
+
+	private flattenTopicTree(topic: Topic): Topic[] {
+		const subtopics = topic.subtopics.flatMap((subtopic) => this.flattenTopicTree(subtopic));
+		return [topic, ...subtopics];
 	}
 }

@@ -82,4 +82,30 @@ describe("Topic", () => {
 
 		expect(topic.amountOfCardsNotDueForReview()).toBe(1);
 	});
+
+	test("assembles a review deck containing only cards due for review", () => {
+		// ju: Use the deck builder.
+		// ju: Subtopics should also be included in the review deck.
+		const dueCard = new CardBuilder().dueForReview().build();
+		const notDueCard = new CardBuilder().notDueForReview().build();
+		const deck = new Deck(dueCard, notDueCard);
+		const topic = new Topic("Review Test", deck);
+
+		const reviewDeck = topic.assembleReviewDeck();
+
+		expect(reviewDeck.amountOfCards).toBe(1);
+	});
+
+	test("lists all topics in the hierarchy", () => {
+		const grandchildDeck = new DeckBuilder().empty().build();
+		const grandchild = new Topic("Grandchild", grandchildDeck);
+		const childDeck = new DeckBuilder().empty().build();
+		const child = new Topic("Child", childDeck, [grandchild]);
+		const rootDeck = new DeckBuilder().empty().build();
+		const root = new Topic("Root", rootDeck, [child]);
+
+		const allTopics = root.listAllTopics();
+
+		expect(allTopics).toEqual([root, child, grandchild]);
+	});
 });

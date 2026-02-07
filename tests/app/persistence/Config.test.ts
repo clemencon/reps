@@ -12,7 +12,10 @@ vi.mock("node:os", () => ({
 }));
 
 describe("Config", () => {
-	beforeEach(() => vol.reset());
+	beforeEach(() => {
+		vol.reset();
+		delete process.env["REPS_CONFIG_PATH"];
+	});
 
 	describe("configuration loading", () => {
 		test("missing config file is created with default paths", () => {
@@ -23,6 +26,19 @@ describe("Config", () => {
 				catalogPath: "~/reps",
 				databasePath: "~/.local/share/reps/schedule.sqlite",
 			});
+		});
+
+		test("REPS_CONFIG_PATH environment variable overrides default config file location", () => {
+			process.env["REPS_CONFIG_PATH"] = "/custom/config/reps.json";
+			writeFile("/custom/config/reps.json", {
+				catalogPath: "/env/catalog",
+				databasePath: "/env/database.sqlite",
+			});
+
+			const config = Config.load();
+
+			expect(config.catalogPath).toBe("/env/catalog");
+			expect(config.databasePath).toBe("/env/database.sqlite");
 		});
 
 		test("config file values override defaults", () => {

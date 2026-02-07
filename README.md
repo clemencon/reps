@@ -31,12 +31,12 @@ $ reps
 
 4 out of 7 cards are ready to be reviewed.
 
- catalog (8 cards: 6 due)
- ├── clean-code (4 cards: 3 due)
- │   └── refactoring (1 card: done)
- └── error-handling (3 cards: 3 due)
+reps (6 cards: 5 due)
+├── clean-code (3 cards: 2 due)
+│   └── refactoring (1 card: done)
+└── error-handling (3 cards: 3 due)
 
-Pick a topic to review: clean-code
+Pick a topic to review.
 ```
 
 **Review Process:**

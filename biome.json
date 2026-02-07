@@ -8,6 +8,9 @@
 	},
 	"linter": {
 		"rules": {
+			"complexity": {
+				"useLiteralKeys": "off"
+			},
 			"style": {
 				"useConsistentMemberAccessibility": {
 					"level": "error",

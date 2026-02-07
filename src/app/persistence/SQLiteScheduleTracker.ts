@@ -46,6 +46,7 @@ export class SQLiteScheduleTracker implements ScheduleTracker {
 		this.cachedSchedules[card.id] = schedule;
 	}
 
+	// ju: Close on shutdown?
 	public close(): void {
 		this.db.close();
 	}

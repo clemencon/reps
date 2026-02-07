@@ -3,7 +3,7 @@ import { homedir } from "node:os";
 import { dirname } from "node:path";
 
 export class Config {
-	private static readonly PATH = "~/.config/reps.json";
+	private static readonly DEFAULT_CONFIG_PATH = "~/.config/reps.json";
 	public static readonly DEFAULT_CATALOG_PATH = "~/reps";
 	public static readonly DEFAULT_DATABASE_PATH = "~/.local/share/reps/schedule.sqlite";
 
@@ -13,9 +13,14 @@ export class Config {
 	) {}
 
 	public static load(): Config {
-		const configPath = Config.expanded(Config.PATH);
-		if (!Config.fileExists(configPath)) Config.writeDefaultFile(configPath);
-		return Config.parseFile(configPath);
+		const path = Config.pathToFile();
+		if (!Config.fileExists(path)) Config.writeDefaultFile(path);
+		return Config.parseFile(path);
+	}
+
+	private static pathToFile(): string {
+		const path = process.env["REPS_CONFIG_PATH"] ?? Config.DEFAULT_CONFIG_PATH;
+		return Config.expanded(path);
 	}
 
 	private static parseFile(path: string): Config {

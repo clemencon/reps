@@ -1,4 +1,4 @@
-import { CLI } from "./app/cli/CLI.js";
+import { ConsoleUserInterface } from "./app/cli/ConsoleUserInterface.js";
 import { Config } from "./app/persistence/Config.js";
 import { FileSystemCatalog } from "./app/persistence/FileSystemCatalog.js";
 import { SQLiteScheduleTracker } from "./app/persistence/SQLiteScheduleTracker.js";
@@ -10,7 +10,7 @@ export function bootstrap(): Reps {
 	const config = Config.load();
 	const scheduleTracker: ScheduleTracker = new SQLiteScheduleTracker(config.databasePath);
 	const catalog = new FileSystemCatalog(config.catalogPath, scheduleTracker);
-	const userInterface: UserInterface = new CLI();
+	const userInterface: UserInterface = new ConsoleUserInterface();
 
 	return new Reps(catalog, userInterface);
 }
