@@ -26,4 +26,20 @@ export class Deck {
 	public mergeWith(other: Deck): Deck {
 		return new Deck(...this.cards, ...other.cards);
 	}
+
+	public shuffle(): Deck {
+		if (this.cards.length < 2) return new Deck(...this.cards);
+
+		const shuffledCards = [...this.cards];
+		do {
+			for (let i = shuffledCards.length - 1; i > 0; i--) {
+				const j = Math.floor(Math.random() * (i + 1));
+				// Using the footgun to aim between the toes.
+				// biome-ignore lint/style/noNonNullAssertion: Indices are always within bounds when using length - 1.
+				[shuffledCards[i], shuffledCards[j]] = [shuffledCards[j]!, shuffledCards[i]!];
+			}
+		} while (shuffledCards.every((card, index) => card === this.cards[index]));
+
+		return new Deck(...shuffledCards);
+	}
 }
