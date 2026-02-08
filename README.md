@@ -2,29 +2,9 @@
 
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 
-A CLI flashcard app using the SuperMemo SM-2 spaced repetition algorithm.
+A CLI flashcard app that schedules your reviews using the [SuperMemo SM-2](https://en.wikipedia.org/wiki/SuperMemo) spaced repetition algorithm.
 
-## Idiosyncrasies
-
-This is a Petri dish, not production code.
-
-- **100% code coverage:** Does it hurt or help?
-- **OOP over type gymnastics:** Classes instead of TypeScript's type system. Easier? Harder? More verbose?
-- **Immutability-first:** Kotlin encourages this. How does it shape TypeScript?
-- **Deep classes, narrow interfaces:** Ousterhout's philosophy.
-  Do narrow interfaces make tests focus on behavior instead of implementation?
-
-The code may look odd.
-
-(Some thoughts/concerns are already getting shape during development...)
-
-- Code coverage can create a false sense of security.
-- The code coverage is a good negative indicator, but a bad positive one.
-- I want to think more about the test implementations. It looks mostly classical now, I will try more London style.
-
-## Study Flow
-
-When you run `reps`, you see a topic tree showing cards due for review (when implemented):
+## Quick Start
 
 ```
 $ reps
@@ -39,23 +19,19 @@ reps (6 cards: 5 due)
 Pick a topic to review.
 ```
 
-**Review Process:**
+## Installation
 
-1. Choose a topic from the tree
-2. Answer the question, reveal the answer
-3. Grade your recall to schedule the next review
-4. Continue until you finish all cards in the topic
-5. Return to the topic tree or finish if no cards remain
+Requires [Node.js](https://nodejs.org/) >= 22.
 
-## Core Concepts
+```bash
+npm install -g @clemencon/reps
+```
 
-![dependency-graph.svg](dependency-graph.svg)
+## Usage
 
-### Card
+### 1. Create your cards
 
-A flashcard with a question and answer, stored as a plain text file separated by `???`.
-
-**Format:**
+Cards are plain text files (`.md` or `.txt`) with question and answer separated by `???`:
 
 ```txt
 What is the capital of France?
@@ -63,33 +39,12 @@ What is the capital of France?
 Paris.
 ```
 
-**Key Points:**
+### 2. Organize them into topics
 
-- One card per file
-- Format: question, then `???`, then answer
-- Content can be text, code, formulas, anything
-- File names are descriptive but don't affect functionality
-- Schedule tracks performance and schedules the next review
-
-### Topic
-
-A subject category that groups related cards. Each topic is a directory in your catalog.
-
-**Characteristics:**
-
-- Contains cards (files in the directory)
-- Can have subtopics (subdirectories)
-- Cards inherit their parent topic's hierarchy
-- Names are descriptive and logically organized
-
-### Catalog
-
-Your complete collection of study material—the root directory containing all topics and cards.
-
-**Structure Example:**
+Place card files in directories inside `~/reps`:
 
 ```
-catalog/
+~/reps/
 ├── clean-code/
 │   ├── function-naming.txt
 │   ├── single-responsibility.txt
@@ -101,128 +56,45 @@ catalog/
     └── untested-exceptions.txt
 ```
 
-### Deck
+### 3. Study
 
-A collection of cards assembled for study.
+Run `reps` to see which cards are due for review, then:
 
-**Types:**
+1. Choose a topic from the tree
+2. Answer the question, then reveal the answer
+3. Grade your recall (0–5) to schedule the next review
+4. Continue until you finish all cards in the topic
+5. Return to the topic tree or finish if no cards remain
 
-- Topic Deck: All cards from a topic and its subtopics
-- Review Deck: Only cards due for review based on the spaced repetition algorithm
-
-### Student
-
-You. The student:
-
-- Selects topics to study
-- Reviews cards and self-evaluates answers
-- Assigns review grades based on recall
-- Advances through review sessions
-
-### Topic Tree
-
-**Structure:**
-
-- Root: The catalog directory containing all top-level topics
-- Topic: A subject area containing:
-  - Multiple subtopics
-  - One deck with all cards for that topic
-
-### Schedule
-
-Reps' memory system.
-It tracks your performance with each card, records retention grades,
-calculates when to review each card next using SM-2,
-and schedules cards based on performance: better recall means longer intervals.
-
-### Spaced Repetition (SM-2 Algorithm)
-
-Reps uses the SuperMemo SM-2 algorithm to optimize review timing.
 Cards you struggle with appear more frequently.
 Cards you master appear less often.
 Review intervals increase exponentially for well-remembered cards.
 
-## Design Decisions
+## Configuration
 
-- Cards and Topics: Plain text files in the filesystem (not in database)
-- Schedule: SQLite database tracking performance and review schedules
-- Card Identification: SHA-1 hash of text file content
+On first run, Reps creates a config file at `~/.config/reps.json`.
 
-This hybrid approach keeps study material editable as plain text while maintaining performance data in a structured database.
+| Setting         | Default                              | Description                     |
+| --------------- | ------------------------------------ | ------------------------------- |
+| `catalogPath`   | `~/reps`                             | Directory containing your cards |
+| `databasePath`  | `~/.local/share/reps/schedule.sqlite`| SQLite database for schedules   |
 
-## Development
+## Idiosyncrasies
 
-```bash
-# Build for production.
-pnpm build
+This is a Petri dish, not production code.
 
-# Run linter/formatter with auto-fix.
-pnpm fix
+- **100% code coverage:** Does it hurt or help?
+- **OOP over type gymnastics:** Classes instead of TypeScript's type system. Easier? Harder? More verbose?
+- **Immutability-first:** Kotlin encourages this. How does it shape TypeScript?
+- **Deep classes, narrow interfaces:** Ousterhout's philosophy.
+  Do narrow interfaces make tests focus on behavior instead of implementation?
 
-# Run the tests (including the snapshot tests).
-pnpm test
+The code may look odd.
 
-# Generate dependency graph (requires GraphViz).
-pnpm graph
-```
+## Contributing
 
-## SM-2 Algorithm
+Contributions are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md) for setup instructions and guidelines.
 
-[Original article on Wikipedia](https://en.wikipedia.org/wiki/SuperMemo)
+## License
 
-The first computer-based SuperMemo algorithm (SM-2) tracks three properties for each card being studied:
-
-- The repetition number n, which is the number of times the card has been successfully recalled
-  (meaning it was given a grade ≥ 3) in a row since the last time it was not.
-- The easiness factor EF, which loosely indicates how "easy" the card is
-  (more precisely, it determines how quickly the inter-repetition interval grows). The initial value of EF is 2.5.
-- The inter-repetition interval I, which is the length of time (in days)
-  SuperMemo will wait after the previous review before asking the user to review the card again.
-
-Every time the user starts a review session,
-SuperMemo provides the user with the cards whose last review occurred at least I days ago.
-For each review, the user tries to recall the information and (after being shown the correct answer)
-specifies a grade q (from 0 to 5) indicating a self-evaluation of the quality of their response,
-with each grade having the following meaning:
-
-- 0: Total blackout, complete failure to recall the information.
-- 1: Incorrect response, but upon seeing the correct answer, it felt familiar.
-- 2: Incorrect response, but upon seeing the correct answer, it seemed easy to remember.
-- 3: Correct response, but required significant effort to recall.
-- 4: Correct response, after some hesitation.
-- 5: Correct response with perfect recall.
-
-The following algorithm is then applied to update the three variables associated with the card:
-
-```
-algorithm SM-2 is
-    input:  user grade q
-            repetition number n
-            easiness factor EF
-            interval I
-    output: updated values of n, EF, and I
-
-    if q ≥ 3 (correct response) then
-        if n = 0 then
-            I ← 1
-        else if n = 1 then
-            I ← 6
-        else
-            I ← round(I × EF)
-        end if
-        increment n
-    else (incorrect response)
-        n ← 0
-        I ← 1
-    end if
-    
-    EF ← EF + (0.1 − (5 − q) × (0.08 + (5 − q) × 0.02))
-    if EF < 1.3 then
-        EF ← 1.3
-    end if
-    
-    return (n, EF, I)
-```
-
-After all scheduled reviews are complete, SuperMemo asks the user to re-review any cards they marked
-with a grade less than 4 repeatedly until they give a grade ≥ 4.
+[GPL-3.0](LICENSE)
