@@ -22,6 +22,10 @@ export class FileSystemCatalog implements Catalog {
 		return this.buildTopicTree(this.catalogPath);
 	}
 
+	public store(card: Card): void {
+		this.scheduleTracker.store(card);
+	}
+
 	private buildTopicTree(path: string): Topic {
 		const entries = readdirSync(path, { withFileTypes: true });
 

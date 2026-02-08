@@ -1,16 +1,14 @@
 import { existsSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
-
 import { FileSystemCatalog } from "../../../src/app/persistence/FileSystemCatalog.js";
 import { Card } from "../../../src/core/cataloging/Card.js";
 import type { Topic } from "../../../src/core/cataloging/Topic.js";
 import { Schedule } from "../../../src/core/scheduling/Schedule.js";
 import type { ScheduleTracker } from "../../../src/core/scheduling/ScheduleTracker.js";
 
-// ju: Clean up the spacing.
+// ju: Clean up the test implementations.
 describe("FileSystemCatalog", () => {
 	let temporaryCatalogPath: string | undefined;
 
@@ -48,6 +46,7 @@ describe("FileSystemCatalog", () => {
 		const topicTree = catalog.getTopicTree();
 		const cleanCode = findSubtopic(topicTree, "clean-code");
 		const targetCard = findCardByQuestion(cleanCode, getFirstCardQuestion(cleanCodeCards));
+
 		expect(targetCard.getSchedule()).toBe(schedule);
 		expect(scheduleTracker.get).toHaveBeenCalledWith(
 			new Card(targetCard.question, targetCard.answer),
@@ -60,6 +59,7 @@ describe("FileSystemCatalog", () => {
 		temporaryCatalogPath = tempDir;
 		const filePath = join(tempDir, "invalid.txt");
 		writeFileSync(filePath, "Question without separator");
+
 		const catalog = new FileSystemCatalog(tempDir, scheduleTracker.tracker);
 
 		expect(() => catalog.getTopicTree()).toThrow(
@@ -75,6 +75,16 @@ describe("FileSystemCatalog", () => {
 		new FileSystemCatalog(missingPath, scheduleTracker.tracker);
 
 		expect(existsSync(missingPath)).toBe(true);
+	});
+
+	test("stores reviewed card schedules", () => {
+		const scheduleTracker = createScheduleTracker(Schedule.forNewCard());
+		const catalog = new FileSystemCatalog(exampleCatalogPath, scheduleTracker.tracker);
+		const card = new Card("Some question", "Some answer");
+
+		catalog.store(card);
+
+		expect(scheduleTracker.tracker.store).toHaveBeenCalledWith(card);
 	});
 
 	test("throws an error when the catalog path is a file", () => {
