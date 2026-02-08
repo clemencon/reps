@@ -15,9 +15,9 @@
 		"isolatedModules": true,
 		"skipLibCheck": true,
 
-		"sourceMap": true,
-		"declaration": true,
-		"declarationMap": true,
+		"sourceMap": false,
+		"declaration": false,
+		"declarationMap": false,
 
 		"strict": true,
 		"noUncheckedIndexedAccess": true,
