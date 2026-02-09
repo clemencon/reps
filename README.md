@@ -105,6 +105,10 @@ The code may look odd.
 
 Contributions are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md) for setup instructions and guidelines.
 
+## Todo List
+
+[TODO.md](TODO.md)
+
 ## License
 
 [MIT](LICENSE)
