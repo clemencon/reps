@@ -23,8 +23,16 @@ Pick a topic to review.
 
 Requires [Node.js](https://nodejs.org/) >= 22.
 
+With npm:
+
 ```bash
 npm install -g @clemencon/reps
+```
+
+Or with pnpm:
+
+```bash
+pnpm add -g @clemencon/reps
 ```
 
 ## Usage
