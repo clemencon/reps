@@ -3,7 +3,7 @@
 	"version": "1.0.0",
 	"description": "CLI flashcard app.",
 	"author": "Julien Clémençon",
-	"license": "GPL-3.0",
+	"license": "MIT",
 	"type": "module",
 	"engines": {
 		"node": ">=22.0.0"

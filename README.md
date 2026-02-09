@@ -2,7 +2,7 @@
 
 ![reps-cli-tiny.gif](mascot/reps-cli-tiny.gif)
 
-[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 A CLI flashcard app that schedules your reviews using the [SuperMemo SM-2](https://en.wikipedia.org/wiki/SuperMemo) spaced repetition algorithm.
 
@@ -107,4 +107,4 @@ Contributions are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md) for setup inst
 
 ## License
 
-[GPL-3.0](LICENSE)
+[MIT](LICENSE)
