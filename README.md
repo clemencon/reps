@@ -1,5 +1,7 @@
 # Reps
 
+![reps-cli-tiny.gif](mascot/reps-cli-tiny.gif)
+
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 
 A CLI flashcard app that schedules your reviews using the [SuperMemo SM-2](https://en.wikipedia.org/wiki/SuperMemo) spaced repetition algorithm.
@@ -82,10 +84,10 @@ Review intervals increase exponentially for well-remembered cards.
 
 On first run, Reps creates a config file at `~/.config/reps.json`.
 
-| Setting         | Default                              | Description                     |
-| --------------- | ------------------------------------ | ------------------------------- |
-| `catalogPath`   | `~/reps`                             | Directory containing your cards |
-| `databasePath`  | `~/.local/share/reps/schedule.sqlite`| SQLite database for schedules   |
+| Setting        | Default                               | Description                     |
+|----------------|---------------------------------------|---------------------------------|
+| `catalogPath`  | `~/reps`                              | Directory containing your cards |
+| `databasePath` | `~/.local/share/reps/schedule.sqlite` | SQLite database for schedules   |
 
 ## Idiosyncrasies
 
