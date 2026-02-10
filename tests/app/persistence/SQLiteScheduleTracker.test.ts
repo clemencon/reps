@@ -2,15 +2,18 @@ import { existsSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterEach, beforeEach, describe, expect, test } from "vitest";
+import type { Config } from "../../../src/app/Config.js";
 import { SQLiteScheduleTracker } from "../../../src/app/persistence/SQLiteScheduleTracker.js";
 import { Card } from "../../../src/core/cataloging/Card.js";
 import { Grade } from "../../../src/core/scheduling/Grade.js";
+import { InMemoryConfig } from "./InMemoryConfig.js";
 
 describe("SQLiteScheduleTracker (in-memory)", () => {
 	let scheduleTracker: SQLiteScheduleTracker;
 
 	beforeEach(() => {
-		scheduleTracker = new SQLiteScheduleTracker(":memory:");
+		const config = new InMemoryConfig("???", "pat/to/catalog", ":memory:");
+		scheduleTracker = new SQLiteScheduleTracker(config);
 	});
 
 	afterEach(() => {
@@ -51,13 +54,14 @@ describe("SQLiteScheduleTracker (in-memory)", () => {
 
 describe("SQLiteScheduleTracker (filesystem)", () => {
 	let testDir: string;
-	let dbPath: string;
+	let config: Config;
 	let tracker: SQLiteScheduleTracker;
 
 	beforeEach(() => {
 		testDir = join(tmpdir(), `reps-test-${Date.now()}`);
-		dbPath = join(testDir, "test.db");
-		tracker = new SQLiteScheduleTracker(dbPath);
+		const dbPath = join(testDir, "test.db");
+		config = new InMemoryConfig("???", "path/to/catalog", dbPath);
+		tracker = new SQLiteScheduleTracker(config);
 	});
 
 	afterEach(() => {
@@ -79,7 +83,7 @@ describe("SQLiteScheduleTracker (filesystem)", () => {
 		tracker.store(card);
 		tracker.close();
 
-		const restoredTracker = new SQLiteScheduleTracker(dbPath);
+		const restoredTracker = new SQLiteScheduleTracker(config);
 		const restored = restoredTracker.get(card);
 
 		expect(restored.consecutiveSuccesses.count).toBe(reviewedSchedule.consecutiveSuccesses.count);

@@ -10,7 +10,7 @@ import type { ScheduleTracker } from "./core/scheduling/ScheduleTracker.js";
 
 export function bootstrap(): Reps {
 	const config: Config = JsonConfig.load();
-	const scheduleTracker: ScheduleTracker = new SQLiteScheduleTracker(config.databasePath); // ju: Pass the config instead.
+	const scheduleTracker: ScheduleTracker = new SQLiteScheduleTracker(config);
 	const catalog: Catalog = new FileSystemCatalog(scheduleTracker, config);
 	const userInterface: UserInterface = new ConsoleUserInterface();
 

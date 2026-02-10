@@ -4,14 +4,15 @@ import Database from "better-sqlite3";
 import type { Card } from "../../core/cataloging/Card.js";
 import { Schedule } from "../../core/scheduling/Schedule.js";
 import type { ScheduleTracker } from "../../core/scheduling/ScheduleTracker.js";
+import type { Config } from "../Config.js";
 
 export class SQLiteScheduleTracker implements ScheduleTracker {
 	private readonly db: Database.Database;
 	private readonly cachedSchedules: SchedulesCache;
 
-	public constructor(databasePath: string) {
-		this.ensureDirectoryExists(databasePath);
-		this.db = new Database(databasePath);
+	public constructor(config: Config) {
+		this.ensureDirectoryExists(config.databasePath);
+		this.db = new Database(config.databasePath);
 		this.initializeSchema();
 		this.cachedSchedules = this.getAll();
 	}
