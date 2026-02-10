@@ -7,6 +7,7 @@ import { Card } from "../../../src/core/cataloging/Card.js";
 import type { Topic } from "../../../src/core/cataloging/Topic.js";
 import { Schedule } from "../../../src/core/scheduling/Schedule.js";
 import type { ScheduleTracker } from "../../../src/core/scheduling/ScheduleTracker.js";
+import { InMemoryConfig } from "./InMemoryConfig.js";
 
 // ju: Clean up the test implementations.
 describe("FileSystemCatalog", () => {
@@ -22,7 +23,8 @@ describe("FileSystemCatalog", () => {
 
 	test("builds the a topic tree from the catalog directory", () => {
 		const scheduleTracker = createScheduleTracker(Schedule.forNewCard());
-		const catalog = new FileSystemCatalog(exampleCatalogPath, scheduleTracker.tracker);
+		const config = new InMemoryConfig("???", exampleCatalogPath);
+		const catalog = new FileSystemCatalog(scheduleTracker.tracker, config);
 
 		const topicTree = catalog.getTopicTree();
 
@@ -41,7 +43,8 @@ describe("FileSystemCatalog", () => {
 	test("applies the schedules from the schedule tracker", () => {
 		const schedule = Schedule.parse(1, 2.2, 3, "2020-01-01T00:00:00.000Z");
 		const scheduleTracker = createScheduleTracker(schedule);
-		const catalog = new FileSystemCatalog(exampleCatalogPath, scheduleTracker.tracker);
+		const config = new InMemoryConfig("???", exampleCatalogPath);
+		const catalog = new FileSystemCatalog(scheduleTracker.tracker, config);
 
 		const topicTree = catalog.getTopicTree();
 		const cleanCode = findSubtopic(topicTree, "clean-code");
@@ -60,7 +63,8 @@ describe("FileSystemCatalog", () => {
 		const filePath = join(tempDir, "invalid.txt");
 		writeFileSync(filePath, "Question without separator");
 
-		const catalog = new FileSystemCatalog(tempDir, scheduleTracker.tracker);
+		const config = new InMemoryConfig("???", tempDir, "");
+		const catalog = new FileSystemCatalog(scheduleTracker.tracker, config);
 
 		expect(() => catalog.getTopicTree()).toThrow(
 			"Card file invalid.txt must contain question and answer separated by '???'.",
@@ -72,14 +76,16 @@ describe("FileSystemCatalog", () => {
 		const missingPath = join(tmpdir(), "reps-missing-catalog");
 		temporaryCatalogPath = missingPath;
 
-		new FileSystemCatalog(missingPath, scheduleTracker.tracker);
+		const config = new InMemoryConfig("???", missingPath);
+		new FileSystemCatalog(scheduleTracker.tracker, config);
 
 		expect(existsSync(missingPath)).toBe(true);
 	});
 
 	test("stores reviewed card schedules", () => {
 		const scheduleTracker = createScheduleTracker(Schedule.forNewCard());
-		const catalog = new FileSystemCatalog(exampleCatalogPath, scheduleTracker.tracker);
+		const config = new InMemoryConfig("???", exampleCatalogPath);
+		const catalog = new FileSystemCatalog(scheduleTracker.tracker, config);
 		const card = new Card("Some question", "Some answer");
 
 		catalog.store(card);
@@ -94,7 +100,8 @@ describe("FileSystemCatalog", () => {
 		const filePath = join(tempDir, "not-a-directory.txt");
 		writeFileSync(filePath, "Not a directory");
 
-		expect(() => new FileSystemCatalog(filePath, scheduleTracker.tracker)).toThrow(
+		const config = new InMemoryConfig("???", filePath);
+		expect(() => new FileSystemCatalog(scheduleTracker.tracker, config)).toThrow(
 			`Catalog path ${filePath} must be an existing directory.`,
 		);
 	});

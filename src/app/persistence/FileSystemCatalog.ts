@@ -6,16 +6,20 @@ import type { Catalog } from "../../core/cataloging/Catalog.js";
 import { Deck } from "../../core/cataloging/Deck.js";
 import { Topic } from "../../core/cataloging/Topic.js";
 import type { ScheduleTracker } from "../../core/scheduling/ScheduleTracker.js";
+import type { Config } from "../Config.js";
 
 export class FileSystemCatalog implements Catalog {
 	private static CARD_FILE_EXTENSIONS = new Set([".md", ".txt"]);
-	private static CARD_SEPARATOR = "???"; // ju: Move to config.
+	private readonly catalogPath: string;
+	private readonly cardSeparator: string;
 
 	public constructor(
-		private readonly catalogPath: string,
 		private readonly scheduleTracker: ScheduleTracker,
+		config: Config,
 	) {
-		this.ensureDirectoryExists(this.catalogPath);
+		this.ensureDirectoryExists(config.catalogPath);
+		this.catalogPath = config.catalogPath;
+		this.cardSeparator = config.cardSeparator;
 	}
 
 	public getTopicTree(): Topic {
@@ -56,14 +60,14 @@ export class FileSystemCatalog implements Catalog {
 
 	private parseCardContent(filePath: string): { question: string; answer: string } {
 		const content = readFileSync(filePath, "utf-8").trimEnd();
-		const separatorIndex = content.indexOf(FileSystemCatalog.CARD_SEPARATOR);
+		const separatorIndex = content.indexOf(this.cardSeparator);
 		const separatorIsMissing = separatorIndex === -1;
 		if (separatorIsMissing) {
-			const message = `Card file ${basename(filePath)} must contain question and answer separated by '${FileSystemCatalog.CARD_SEPARATOR}'.`;
+			const message = `Card file ${basename(filePath)} must contain question and answer separated by '${this.cardSeparator}'.`;
 			throw new Error(message);
 		}
 		const question = content.slice(0, separatorIndex).trim();
-		const answer = content.slice(separatorIndex + FileSystemCatalog.CARD_SEPARATOR.length).trim();
+		const answer = content.slice(separatorIndex + this.cardSeparator.length).trim();
 		return { question, answer };
 	}
 

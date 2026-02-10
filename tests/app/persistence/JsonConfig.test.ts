@@ -1,6 +1,6 @@
 import { vol } from "memfs";
 import { beforeEach, describe, expect, test, vi } from "vitest";
-import { Config } from "../../../src/app/persistence/Config.js";
+import { JsonConfig } from "../../../src/app/persistence/JsonConfig.js";
 
 vi.mock("node:fs", async () => {
 	const memfs = await import("memfs");
@@ -19,12 +19,13 @@ describe("Config", () => {
 
 	describe("configuration loading", () => {
 		test("missing config file is created with default paths", () => {
-			Config.load();
+			JsonConfig.load();
 			const createdConfigFile = readFile("/home/clemencon/.config/reps.json");
 
 			expect(JSON.parse(createdConfigFile)).toEqual({
 				catalogPath: "~/reps",
 				databasePath: "~/.local/share/reps/schedule.sqlite",
+				cardSeparator: "???",
 			});
 		});
 
@@ -35,7 +36,7 @@ describe("Config", () => {
 				databasePath: "/env/database.sqlite",
 			});
 
-			const config = Config.load();
+			const config = JsonConfig.load();
 
 			expect(config.catalogPath).toBe("/env/catalog");
 			expect(config.databasePath).toBe("/env/database.sqlite");
@@ -47,7 +48,7 @@ describe("Config", () => {
 				databasePath: "/custom/database.sqlite",
 			});
 
-			const config = Config.load();
+			const config = JsonConfig.load();
 
 			expect(config.catalogPath).toBe("/custom/catalog");
 			expect(config.databasePath).toBe("/custom/database.sqlite");
@@ -58,7 +59,7 @@ describe("Config", () => {
 				databasePath: "/custom/database.sqlite",
 			});
 
-			const config = Config.load();
+			const config = JsonConfig.load();
 
 			expect(config.catalogPath).toBe("/home/clemencon/reps");
 			expect(config.databasePath).toBe("/custom/database.sqlite");
@@ -69,7 +70,7 @@ describe("Config", () => {
 				catalogPath: "/custom/catalog",
 			});
 
-			const config = Config.load();
+			const config = JsonConfig.load();
 
 			expect(config.catalogPath).toBe("/custom/catalog");
 			expect(config.databasePath).toBe("/home/clemencon/.local/share/reps/schedule.sqlite");
@@ -78,20 +79,20 @@ describe("Config", () => {
 		test("malformed JSON throws error with file path", () => {
 			writeMalformedFile("/home/clemencon/.config/reps.json", "{ invalid json");
 
-			expect(() => Config.load()).toThrow(
+			expect(() => JsonConfig.load()).toThrow(
 				"Failed to read the configuration file /home/clemencon/.config/reps.json: invalid JSON syntax.",
 			);
 		});
 
 		test("custom catalog path overrides default location", () => {
 			writeFile("/home/clemencon/.config/reps.json", { catalogPath: "/custom/catalog" });
-			const config = Config.load();
+			const config = JsonConfig.load();
 			expect(config.catalogPath).toBe("/custom/catalog");
 		});
 
 		test("custom database path overrides default location", () => {
 			writeFile("/home/clemencon/.config/reps.json", { databasePath: "/custom/database.sqlite" });
-			const config = Config.load();
+			const config = JsonConfig.load();
 			expect(config.databasePath).toBe("/custom/database.sqlite");
 		});
 	});
@@ -103,7 +104,7 @@ describe("Config", () => {
 				databasePath: "~/.data/reps.sqlite",
 			});
 
-			const config = Config.load();
+			const config = JsonConfig.load();
 
 			expect(config.catalogPath).toBe("/home/clemencon/my-flashcards");
 			expect(config.databasePath).toBe("/home/clemencon/.data/reps.sqlite");
@@ -115,7 +116,7 @@ describe("Config", () => {
 				databasePath: "/var/data/reps.sqlite",
 			});
 
-			const config = Config.load();
+			const config = JsonConfig.load();
 
 			expect(config.catalogPath).toBe("/absolute/path/to/catalog");
 			expect(config.databasePath).toBe("/var/data/reps.sqlite");
