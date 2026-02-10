@@ -12,7 +12,7 @@ describe("SQLiteScheduleTracker (in-memory)", () => {
 	let scheduleTracker: SQLiteScheduleTracker;
 
 	beforeEach(() => {
-		const config = new InMemoryConfig("???", "pat/to/catalog", ":memory:");
+		const config = InMemoryConfig.withDatabasePath(":memory:");
 		scheduleTracker = new SQLiteScheduleTracker(config);
 	});
 
@@ -59,8 +59,7 @@ describe("SQLiteScheduleTracker (filesystem)", () => {
 
 	beforeEach(() => {
 		testDir = join(tmpdir(), `reps-test-${Date.now()}`);
-		const dbPath = join(testDir, "test.db");
-		config = new InMemoryConfig("???", "path/to/catalog", dbPath);
+		config = InMemoryConfig.withDatabasePath(join(testDir, "test.db"));
 		tracker = new SQLiteScheduleTracker(config);
 	});
 

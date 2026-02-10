@@ -23,7 +23,7 @@ describe("FileSystemCatalog", () => {
 
 	test("builds the a topic tree from the catalog directory", () => {
 		const scheduleTracker = createScheduleTracker(Schedule.forNewCard());
-		const config = new InMemoryConfig("???", exampleCatalogPath);
+		const config = InMemoryConfig.withCatalogPath(exampleCatalogPath);
 		const catalog = new FileSystemCatalog(scheduleTracker.tracker, config);
 
 		const topicTree = catalog.getTopicTree();
@@ -43,7 +43,7 @@ describe("FileSystemCatalog", () => {
 	test("applies the schedules from the schedule tracker", () => {
 		const schedule = Schedule.parse(1, 2.2, 3, "2020-01-01T00:00:00.000Z");
 		const scheduleTracker = createScheduleTracker(schedule);
-		const config = new InMemoryConfig("???", exampleCatalogPath);
+		const config = InMemoryConfig.withCatalogPath(exampleCatalogPath);
 		const catalog = new FileSystemCatalog(scheduleTracker.tracker, config);
 
 		const topicTree = catalog.getTopicTree();
@@ -63,7 +63,7 @@ describe("FileSystemCatalog", () => {
 		const filePath = join(tempDir, "invalid.txt");
 		writeFileSync(filePath, "Question without separator");
 
-		const config = new InMemoryConfig("???", tempDir, "");
+		const config = InMemoryConfig.withCatalogPath(tempDir);
 		const catalog = new FileSystemCatalog(scheduleTracker.tracker, config);
 
 		expect(() => catalog.getTopicTree()).toThrow(
@@ -71,12 +71,27 @@ describe("FileSystemCatalog", () => {
 		);
 	});
 
+	test("parses a card using a custom separator", () => {
+		const scheduleTracker = createScheduleTracker(Schedule.forNewCard());
+		const tempDir = mkdtempSync(join(tmpdir(), "reps-catalog-"));
+		temporaryCatalogPath = tempDir;
+		writeFileSync(join(tempDir, "card.txt"), "What is TDD?\n---\nTest-driven development.");
+
+		const config = new InMemoryConfig("---", tempDir, "");
+		const catalog = new FileSystemCatalog(scheduleTracker.tracker, config);
+
+		const topicTree = catalog.getTopicTree();
+		const [card] = topicTree.deck.cards;
+		expect(card?.question).toBe("What is TDD?");
+		expect(card?.answer).toBe("Test-driven development.");
+	});
+
 	test("creates the catalog directory when missing", () => {
 		const scheduleTracker = createScheduleTracker(Schedule.forNewCard());
 		const missingPath = join(tmpdir(), "reps-missing-catalog");
 		temporaryCatalogPath = missingPath;
 
-		const config = new InMemoryConfig("???", missingPath);
+		const config = InMemoryConfig.withCatalogPath(missingPath);
 		new FileSystemCatalog(scheduleTracker.tracker, config);
 
 		expect(existsSync(missingPath)).toBe(true);
@@ -84,7 +99,7 @@ describe("FileSystemCatalog", () => {
 
 	test("stores reviewed card schedules", () => {
 		const scheduleTracker = createScheduleTracker(Schedule.forNewCard());
-		const config = new InMemoryConfig("???", exampleCatalogPath);
+		const config = InMemoryConfig.withCatalogPath(exampleCatalogPath);
 		const catalog = new FileSystemCatalog(scheduleTracker.tracker, config);
 		const card = new Card("Some question", "Some answer");
 
@@ -100,7 +115,7 @@ describe("FileSystemCatalog", () => {
 		const filePath = join(tempDir, "not-a-directory.txt");
 		writeFileSync(filePath, "Not a directory");
 
-		const config = new InMemoryConfig("???", filePath);
+		const config = InMemoryConfig.withCatalogPath(filePath);
 		expect(() => new FileSystemCatalog(scheduleTracker.tracker, config)).toThrow(
 			`Catalog path ${filePath} must be an existing directory.`,
 		);
