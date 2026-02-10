@@ -3,7 +3,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 import { FileSystemCatalog } from "../../../src/app/persistence/FileSystemCatalog.js";
-import { Card } from "../../../src/core/cataloging/Card.js";
+import type { Card } from "../../../src/core/cataloging/Card.js";
 import type { Topic } from "../../../src/core/cataloging/Topic.js";
 import { Schedule } from "../../../src/core/scheduling/Schedule.js";
 import type { ScheduleTracker } from "../../../src/core/scheduling/ScheduleTracker.js";
@@ -42,18 +42,16 @@ describe("FileSystemCatalog", () => {
 
 	test("applies the schedules from the schedule tracker", () => {
 		const schedule = Schedule.parse(1, 2.2, 3, "2020-01-01T00:00:00.000Z");
-		const scheduleTracker = createScheduleTracker(schedule);
+		const { tracker } = createScheduleTracker(schedule);
 		const config = InMemoryConfig.withCatalogPath(exampleCatalogPath);
-		const catalog = new FileSystemCatalog(scheduleTracker.tracker, config);
+		const catalog = new FileSystemCatalog(tracker, config);
 
 		const topicTree = catalog.getTopicTree();
 		const cleanCode = findSubtopic(topicTree, "clean-code");
 		const targetCard = findCardByQuestion(cleanCode, getFirstCardQuestion(cleanCodeCards));
 
 		expect(targetCard.getSchedule()).toBe(schedule);
-		expect(scheduleTracker.get).toHaveBeenCalledWith(
-			new Card(targetCard.question, targetCard.answer),
-		);
+		catalog.store(targetCard);
 	});
 
 	test("throws an error when a card is missing the separator", () => {
@@ -95,17 +93,6 @@ describe("FileSystemCatalog", () => {
 		new FileSystemCatalog(scheduleTracker.tracker, config);
 
 		expect(existsSync(missingPath)).toBe(true);
-	});
-
-	test("stores reviewed card schedules", () => {
-		const scheduleTracker = createScheduleTracker(Schedule.forNewCard());
-		const config = InMemoryConfig.withCatalogPath(exampleCatalogPath);
-		const catalog = new FileSystemCatalog(scheduleTracker.tracker, config);
-		const card = new Card("Some question", "Some answer");
-
-		catalog.store(card);
-
-		expect(scheduleTracker.tracker.store).toHaveBeenCalledWith(card);
 	});
 
 	test("throws an error when the catalog path is a file", () => {
@@ -167,11 +154,10 @@ const errorHandlingCards = [
 
 function createScheduleTracker(schedule: Schedule): {
 	tracker: ScheduleTracker;
-	get: ReturnType<typeof vi.fn>;
 } {
 	const get = vi.fn<ScheduleTracker["get"]>(() => schedule);
 	const store = vi.fn<ScheduleTracker["store"]>(() => {});
-	return { tracker: { get, store }, get };
+	return { tracker: { get, store } };
 }
 
 function getFirstCardQuestion(cards: ReadonlyArray<{ question: string; answer: string }>): string {

@@ -2,6 +2,7 @@ import { describe, expect, test } from "vitest";
 import type { Card } from "../../../src/core/cataloging/Card.js";
 import { Deck } from "../../../src/core/cataloging/Deck.js";
 import { CardBuilder } from "./CardBuilder.js";
+import { DeckBuilder } from "./DeckBuilder.js";
 
 describe("Deck", () => {
 	test("contains cards", () => {
@@ -66,20 +67,15 @@ describe("Deck", () => {
 		expect([...deckToReview]).toEqual([reviewedCard]);
 	});
 
-	// ju: Use the deck builder with enough cards, 1/n!.
 	test("can be shuffled", () => {
-		const card1 = new CardBuilder().build();
-		const card2 = new CardBuilder().build();
-		const card3 = new CardBuilder().build();
-		const card4 = new CardBuilder().build();
-		const card5 = new CardBuilder().build();
-		const deck = new Deck(card1, card2, card3, card4, card5);
+		const deck = new DeckBuilder().withCards(15).build();
 
 		const shuffledDeck = deck.shuffle();
 
-		expect([...shuffledDeck]).not.toEqual([card1, card2, card3, card4, card5]);
+		// ju: 1/15! chance of a false positive.
+		expect([...shuffledDeck]).not.toEqual([...deck]);
 		expect(shuffledDeck.amountOfCards).toEqual(deck.amountOfCards);
-		expect([...shuffledDeck]).toEqual(expect.arrayContaining([card1, card2, card3, card4, card5]));
+		expect([...shuffledDeck]).toEqual(expect.arrayContaining([...deck]));
 	});
 
 	test("can't be shuffled with less than 2 cards", () => {

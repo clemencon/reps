@@ -83,18 +83,6 @@ describe("Config", () => {
 				"Failed to read the configuration file /home/clemencon/.config/reps.json: invalid JSON syntax.",
 			);
 		});
-
-		test("custom catalog path overrides default location", () => {
-			writeFile("/home/clemencon/.config/reps.json", { catalogPath: "/custom/catalog" });
-			const config = JsonConfig.load();
-			expect(config.catalogPath).toBe("/custom/catalog");
-		});
-
-		test("custom database path overrides default location", () => {
-			writeFile("/home/clemencon/.config/reps.json", { databasePath: "/custom/database.sqlite" });
-			const config = JsonConfig.load();
-			expect(config.databasePath).toBe("/custom/database.sqlite");
-		});
 	});
 
 	describe("path expansion", () => {

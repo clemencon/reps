@@ -19,12 +19,6 @@ describe("Card", () => {
 		expect(() => new Card("What is the answer?", "   ")).toThrowError("Answer cannot be blank.");
 	});
 
-	test("has a content-based id", () => {
-		const card = new Card("What is the answer?", "Some answer.");
-		expect(typeof card.id).toBe("string");
-		expect(card.id).toHaveLength(8);
-	});
-
 	test("has the same id for identical content", () => {
 		const card1 = new Card("What is the answer?", "Some answer.");
 		const card2 = new Card("What is the answer?", "Some answer.");

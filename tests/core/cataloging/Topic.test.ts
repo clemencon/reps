@@ -84,16 +84,14 @@ describe("Topic", () => {
 	});
 
 	test("assembles a review deck containing only cards due for review", () => {
-		// ju: Use the deck builder.
-		// ju: Subtopics should also be included in the review deck.
-		const dueCard = new CardBuilder().dueForReview().build();
-		const notDueCard = new CardBuilder().notDueForReview().build();
-		const deck = new Deck(dueCard, notDueCard);
-		const topic = new Topic("Review Test", deck);
+		const childDeck = new DeckBuilder().withCardsDue(2).withCardsNotDue(5).build();
+		const child = new Topic("Child", childDeck);
+		const rootDeck = new DeckBuilder().withCardsDue(7).withCardsNotDue(11).build();
+		const root = new Topic("Root", rootDeck, [child]);
 
-		const reviewDeck = topic.assembleReviewDeck();
+		const reviewDeck = root.assembleReviewDeck();
 
-		expect(reviewDeck.amountOfCards).toBe(1);
+		expect(reviewDeck.amountOfCards).toBe(9);
 	});
 
 	test("lists all topics in the hierarchy", () => {

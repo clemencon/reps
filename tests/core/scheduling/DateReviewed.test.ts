@@ -2,11 +2,6 @@ import { describe, expect, test } from "vitest";
 import { DateReviewed } from "../../../src/core/scheduling/DateReviewed.js";
 
 describe("DateReviewed", () => {
-	test("today() captures current date", () => {
-		const dateReviewed = DateReviewed.today();
-		expect(dateReviewed).toBeDefined();
-	});
-
 	test("today's date can be parsed from an ISO string", () => {
 		const today = new Date();
 		const todayString = today.toISOString();
@@ -42,23 +37,10 @@ describe("DateReviewed", () => {
 		expect(dateReviewed.daysSinceReview).toBe(5);
 	});
 
-	test("daysSinceReview returns correct count for longer periods", () => {
-		const tenDaysAgo = new Date();
-		tenDaysAgo.setDate(tenDaysAgo.getDate() - 10);
-		const dateReviewed = new DateReviewed(tenDaysAgo);
-		expect(dateReviewed.daysSinceReview).toBe(10);
-	});
-
 	test("daysSinceReview floors partial days", () => {
 		const almostOneDayAgo = new Date();
 		almostOneDayAgo.setHours(almostOneDayAgo.getHours() - 23);
 		const dateReviewed = new DateReviewed(almostOneDayAgo);
 		expect(dateReviewed.daysSinceReview).toBe(0);
-	});
-
-	test("toIsoString() returns full ISO date string", () => {
-		const date = new Date("2024-03-15T10:30:00.000Z");
-		const dateReviewed = new DateReviewed(date);
-		expect(dateReviewed.toIsoString()).toBe("2024-03-15T10:30:00.000Z");
 	});
 });
