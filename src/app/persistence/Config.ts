@@ -4,8 +4,8 @@ import { dirname } from "node:path";
 
 export class Config {
 	private static readonly DEFAULT_CONFIG_PATH = "~/.config/reps.json";
-	public static readonly DEFAULT_CATALOG_PATH = "~/reps";
-	public static readonly DEFAULT_DATABASE_PATH = "~/.local/share/reps/schedule.sqlite";
+	private static readonly DEFAULT_CATALOG_PATH = "~/reps";
+	private static readonly DEFAULT_DATABASE_PATH = "~/.local/share/reps/schedule.sqlite";
 
 	private constructor(
 		public readonly catalogPath: string,
