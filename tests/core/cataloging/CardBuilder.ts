@@ -4,7 +4,25 @@ import { Schedule } from "../../../src/core/scheduling/Schedule.js";
 import { ScheduleBuilder } from "../scheduling/ScheduleBuilder.js";
 
 export class CardBuilder {
-	private schedule = Schedule.forNewCard();
+	private question: string;
+	private answer: string;
+	private schedule: Schedule;
+
+	public constructor() {
+		this.question = faker.lorem.sentence();
+		this.answer = faker.lorem.sentence();
+		this.schedule = Schedule.forNewCard();
+	}
+
+	public withQuestion(question: string): CardBuilder {
+		this.question = question;
+		return this;
+	}
+
+	public withAnswer(answer: string): CardBuilder {
+		this.answer = answer;
+		return this;
+	}
 
 	public dueForReview(): CardBuilder {
 		this.schedule = new ScheduleBuilder().due().build();
@@ -17,8 +35,6 @@ export class CardBuilder {
 	}
 
 	public build(): Card {
-		const question = faker.lorem.sentence();
-		const answer = faker.lorem.sentence();
-		return new Card(question, answer, this.schedule);
+		return new Card(this.question, this.answer, this.schedule);
 	}
 }
