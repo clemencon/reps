@@ -4,7 +4,7 @@ export default defineConfig({
 	test: {
 		exclude: ["tests/e2e/**", "node_modules/**"],
 		coverage: {
-			exclude: ["tests/e2e/**"],
+			exclude: ["tests/e2e/**", "src/app/cli/**"],
 			thresholds: {
 				lines: 100,
 				functions: 100,

@@ -6,13 +6,20 @@ import { SQLiteScheduleTracker } from "./app/persistence/SQLiteScheduleTracker.j
 import { Reps } from "./app/Reps.js";
 import type { UserInterface } from "./app/UserInterface.js";
 import type { Catalog } from "./core/cataloging/Catalog.js";
-import type { ScheduleTracker } from "./core/scheduling/ScheduleTracker.js";
 
-export function bootstrap(): Reps {
+export interface AppContext {
+	readonly reps: Reps;
+	readonly shutdown: () => void;
+}
+
+export function bootstrap(): AppContext {
 	const config: Config = JsonConfig.load();
-	const scheduleTracker: ScheduleTracker = new SQLiteScheduleTracker(config);
+	// ju: Type this as a Closable ScheduleTracker.
+	const scheduleTracker = new SQLiteScheduleTracker(config);
 	const catalog: Catalog = new FileSystemCatalog(scheduleTracker, config);
 	const userInterface: UserInterface = new ConsoleUserInterface();
 
-	return new Reps(catalog, userInterface);
+	const reps = new Reps(catalog, userInterface);
+	const shutdown = (): void => scheduleTracker.close();
+	return { reps, shutdown };
 }
