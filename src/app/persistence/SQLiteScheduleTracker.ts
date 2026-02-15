@@ -4,9 +4,10 @@ import Database from "better-sqlite3";
 import type { Card } from "../../core/cataloging/Card.js";
 import { Schedule } from "../../core/scheduling/Schedule.js";
 import type { ScheduleTracker } from "../../core/scheduling/ScheduleTracker.js";
+import type { Closable } from "../Closable.js";
 import type { Config } from "../Config.js";
 
-export class SQLiteScheduleTracker implements ScheduleTracker {
+export class SQLiteScheduleTracker implements Closable, ScheduleTracker {
 	private readonly db: Database.Database;
 	private readonly cachedSchedules: SchedulesCache;
 
@@ -47,7 +48,6 @@ export class SQLiteScheduleTracker implements ScheduleTracker {
 		this.cachedSchedules[card.id] = schedule;
 	}
 
-	// ju: Close on shutdown?
 	public close(): void {
 		this.db.close();
 	}
