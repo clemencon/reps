@@ -4,7 +4,8 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-A CLI flashcard app that schedules your reviews using the [SuperMemo SM-2](https://en.wikipedia.org/wiki/SuperMemo) spaced repetition algorithm.
+A CLI flashcard app that schedules your reviews using the [SuperMemo SM-2](https://en.wikipedia.org/wiki/SuperMemo)
+spaced repetition algorithm.
 
 ## Quick Start
 
@@ -20,6 +21,18 @@ reps (6 cards: 5 due)
 
 Pick a topic to review.
 ```
+
+## Status
+
+A personal MVP. I built this, tried it, but I don't use it. It's not actively maintained.
+
+If I picked this back up, I would:
+
+- **Do performance testing:** Find where things get slow or blow up, stack overflows in deep topic trees, large catalogs.
+- **Make the CLI self-discoverable:** A welcome banner on the first launch, inline hints in prompts.
+- **Flesh out the study flow:** Return to topic selection after finishing a deck, skip cards, show a review summary with
+  grade distribution, add a progress indicator.
+- **Drop the coverage requirement:** Useful as a negative indicator, poor as a positive one.
 
 ## Installation
 
@@ -51,7 +64,7 @@ Paris.
 
 ### 2. Organize them into topics
 
-Place card files in directories inside `~/reps`:
+Put cards in directories under `~/reps`:
 
 ```
 ~/reps/
@@ -88,26 +101,6 @@ On first run, Reps creates a config file at `~/.config/reps.json`.
 |----------------|---------------------------------------|---------------------------------|
 | `catalogPath`  | `~/reps`                              | Directory containing your cards |
 | `databasePath` | `~/.local/share/reps/schedule.sqlite` | SQLite database for schedules   |
-
-## Idiosyncrasies
-
-This is a Petri dish, not production code.
-
-- **100% code coverage:** Does it hurt or help?
-- **OOP over type gymnastics:** Classes instead of TypeScript's type system. Easier? Harder? More verbose?
-- **Immutability-first:** Kotlin encourages this. How does it shape TypeScript?
-- **Deep classes, narrow interfaces:** Ousterhout's philosophy.
-  Do narrow interfaces make tests focus on behavior instead of implementation?
-
-The code may look odd.
-
-## Contributing
-
-Contributions are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md) for setup instructions and guidelines.
-
-## Todo List
-
-[TODO.md](TODO.md)
 
 ## License
 
